@@ -27,16 +27,12 @@ jobs:
       - name: Install SDK components
         run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Configure Gradle JDK
-        working-directory: android
-        run: sed -i "s|org.gradle.java.home=.*|org.gradle.java.home=$JAVA_HOME|" gradle.properties
-
       - name: Grant execute permission for gradlew
         run: chmod +x android/gradlew
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon -Dorg.gradle.java.home="$JAVA_HOME"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
