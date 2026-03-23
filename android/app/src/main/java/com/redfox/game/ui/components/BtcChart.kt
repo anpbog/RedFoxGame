@@ -11,8 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.PathEffect
@@ -28,13 +27,10 @@ import com.redfox.game.ui.theme.AccentGold
 import com.redfox.game.ui.theme.ChartGrid
 import com.redfox.game.ui.theme.ChartLine
 import com.redfox.game.ui.theme.DarkSurface
-import com.redfox.game.ui.theme.DownZoneTransparent
 import com.redfox.game.ui.theme.PoolDown
 import com.redfox.game.ui.theme.PoolUp
-import com.redfox.game.ui.theme.TextPrimary
 import com.redfox.game.ui.theme.TextSecondary
 import com.redfox.game.ui.theme.TextTertiary
-import com.redfox.game.ui.theme.UpZoneTransparent
 import java.text.DecimalFormat
 
 @Composable
@@ -69,10 +65,18 @@ fun BtcChart(
             if (chartWidth <= 0 || chartHeight <= 0) return@Canvas
 
             val prices = trades.map { it.price }
-            val minPrice = prices.min()
-            val maxPrice = prices.max()
+            var minPrice = prices.min()
+            var maxPrice = prices.max()
+
+            // Гарантируем, что startPrice попадает в видимый диапазон Y
+            if (startPrice != null) {
+                if (startPrice < minPrice) minPrice = startPrice
+                if (startPrice > maxPrice) maxPrice = startPrice
+            }
+
             val priceRange = maxPrice - minPrice
-            val padding = if (priceRange > 0) priceRange * 0.1 else maxPrice * 0.001
+            // Увеличенный padding 25% для плавного визуального восприятия
+            val padding = if (priceRange > 0) priceRange * 0.25 else maxPrice * 0.001
             val yMin = minPrice - padding
             val yMax = maxPrice + padding
             val yRange = yMax - yMin
@@ -93,53 +97,46 @@ fun BtcChart(
             // --- Сетка ---
             drawGrid(chartWidth, topPadding, chartHeight, yMin, yMax, priceFormat, ::priceToY)
 
-            // --- Зоны UP/DOWN (градиенты) ---
+            // --- Зоны UP/DOWN (сплошная заливка) ---
+            // В фазе ACTIVE: зоны привязаны к горизонтальной линии startPrice
+            //   Зелёная = от startPrice ВВЕРХ (до верхнего края графика)
+            //   Красная = от startPrice ВНИЗ (до нижнего края графика)
+            // В фазе BETTING: зоны делятся пополам от текущей цены (50/50)
+            val isActivePhase = phase == RoundPhase.ACTIVE || phase == RoundPhase.CALCULATING
+            val dividerY = if (isActivePhase && startPrice != null) {
+                priceToY(startPrice)
+            } else {
+                // BETTING: делим пополам от текущей цены
+                priceToY(latestPrice)
+            }
+
+            // Зелёная зона UP — от верхнего края графика до линии-разделителя
+            drawRect(
+                color = PoolUp.copy(alpha = 0.65f),
+                topLeft = Offset(0f, topPadding),
+                size = Size(
+                    chartWidth,
+                    (dividerY - topPadding).coerceAtLeast(0f)
+                )
+            )
+
+            // Красная зона DOWN — от линии-разделителя до нижнего края графика
+            drawRect(
+                color = PoolDown.copy(alpha = 0.65f),
+                topLeft = Offset(0f, dividerY),
+                size = Size(
+                    chartWidth,
+                    (topPadding + chartHeight - dividerY).coerceAtLeast(0f)
+                )
+            )
+
+            // --- Линия цены ---
             if (trades.size >= 2) {
                 val pricePath = Path()
                 pricePath.moveTo(indexToX(0), priceToY(trades[0].price))
                 for (i in 1 until trades.size) {
                     pricePath.lineTo(indexToX(i), priceToY(trades[i].price))
                 }
-
-                // Зелёная зона UP (сверху до линии)
-                val upPath = Path().apply {
-                    moveTo(indexToX(0), topPadding)
-                    lineTo(indexToX(0), priceToY(trades[0].price))
-                    for (i in 1 until trades.size) {
-                        lineTo(indexToX(i), priceToY(trades[i].price))
-                    }
-                    lineTo(indexToX(trades.size - 1), topPadding)
-                    close()
-                }
-                drawPath(
-                    path = upPath,
-                    brush = Brush.verticalGradient(
-                        colors = listOf(UpZoneTransparent, Color.Transparent),
-                        startY = topPadding,
-                        endY = priceToY(latestPrice)
-                    )
-                )
-
-                // Красная зона DOWN (снизу до линии)
-                val downPath = Path().apply {
-                    moveTo(indexToX(0), priceToY(trades[0].price))
-                    for (i in 1 until trades.size) {
-                        lineTo(indexToX(i), priceToY(trades[i].price))
-                    }
-                    lineTo(indexToX(trades.size - 1), topPadding + chartHeight)
-                    lineTo(indexToX(0), topPadding + chartHeight)
-                    close()
-                }
-                drawPath(
-                    path = downPath,
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, DownZoneTransparent),
-                        startY = priceToY(latestPrice),
-                        endY = topPadding + chartHeight
-                    )
-                )
-
-                // --- Линия цены ---
                 drawPath(
                     path = pricePath,
                     color = ChartLine,

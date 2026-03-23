@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -61,6 +62,7 @@ fun ResetPasswordScreen(
     var email by remember { mutableStateOf("") }
 
     Scaffold(
+        modifier = Modifier.systemBarsPadding(),
         containerColor = DarkBackground,
         topBar = {
             TopAppBar(

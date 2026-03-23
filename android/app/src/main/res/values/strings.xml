@@ -19,8 +19,9 @@
     <!-- Главный экран -->
     <string name="real_game">Реальная игра</string>
     <string name="demo_game">Демо игра</string>
-    <string name="real_game_desc">Играйте на реальные деньги</string>
-    <string name="demo_game_desc">Тренируйтесь без риска</string>
+    <string name="real_game_description">Спрогнозируйте движение реального графика BTC на коротком интервале. Пул победителей разделит 85%% пула проигравших.</string>
+    <string name="demo_game_description">Изучи платформу и потренируйся делать прогноз на демо-счёте игры</string>
+    <string name="badge_coming_soon">Скоро</string>
 
     <!-- Соединение -->
     <string name="no_connection">Нет соединения с сервером</string>
@@ -84,6 +85,7 @@
 
     <!-- Поддержка -->
     <string name="support_title">Поддержка</string>
+    <string name="support_telegram">@RedFoxTrading_Support</string>
     <string name="telegram_support">Telegram поддержка</string>
     <string name="email_support">Email поддержки</string>
     <string name="faq">Частые вопросы</string>
