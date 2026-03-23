@@ -21,6 +21,12 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses > /dev/null 2>&1 || true
+
+      - name: Install SDK components
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
       - name: Configure Gradle JDK
         working-directory: android
         run: sed -i "s|org.gradle.java.home=.*|org.gradle.java.home=$JAVA_HOME|" gradle.properties
@@ -30,7 +36,7 @@ jobs:
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
