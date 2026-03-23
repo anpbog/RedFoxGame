@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Иконка Ethereum -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+
+    <!-- Серый круг -->
+    <path
+        android:fillColor="#627EEA"
+        android:pathData="M16,1 A15,15 0 1,1 16,31 A15,15 0 1,1 16,1 Z" />
+
+    <!-- Ромб Ethereum (верхняя часть) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,5 L22,16 L16,13 Z" />
+    <path
+        android:fillColor="#C0CCF7"
+        android:pathData="M16,5 L10,16 L16,13 Z" />
+
+    <!-- Ромб Ethereum (нижняя часть) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,27 L22,18 L16,21 Z" />
+    <path
+        android:fillColor="#C0CCF7"
+        android:pathData="M16,27 L10,18 L16,21 Z" />
+
+    <!-- Средняя линия -->
+    <path
+        android:fillColor="#8198EE"
+        android:pathData="M16,14.5 L22,17 L16,19.5 L10,17 Z" />
+
+</vector>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Иконка Bitcoin (маленькая, для выбора сети) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+
+    <!-- Оранжевый круг -->
+    <path
+        android:fillColor="#F7931A"
+        android:pathData="M16,1 A15,15 0 1,1 16,31 A15,15 0 1,1 16,1 Z" />
+
+    <!-- Символ ₿ -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14,7 L14,9 L13,9 L13,10.5 L14,10.5 L14,21.5 L13,21.5 L13,23 L14,23 L14,25 L15.5,25 L15.5,23 L17.5,23
+            C19.5,23 21,21.5 21,19.5 C21,18.2 20.2,17.2 19.2,16.7
+            C20,16.1 20.5,15.2 20.5,14 C20.5,12 19,10.5 17,10.5 L15.5,10.5 L15.5,7 Z
+            M15.5,12 L17,12 C18,12 18.8,12.8 18.8,13.8 C18.8,14.8 18,15.5 17,15.5 L15.5,15.5 Z
+            M15.5,17 L17.5,17 C18.7,17 19.5,17.8 19.5,19 C19.5,20.2 18.7,21 17.5,21 L15.5,21 Z" />
+
+</vector>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Иконка монеты BTC (зелёная) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Круг монеты -->
+    <path
+        android:fillColor="#00C853"
+        android:pathData="M32,4 A28,28 0 1,1 32,60 A28,28 0 1,1 32,4 Z" />
+
+    <!-- Внутренний ободок -->
+    <path
+        android:fillColor="#00E676"
+        android:pathData="M32,8 A24,24 0 1,1 32,56 A24,24 0 1,1 32,8 Z" />
+
+    <!-- Тёмный центр -->
+    <path
+        android:fillColor="#00C853"
+        android:pathData="M32,10 A22,22 0 1,1 32,54 A22,22 0 1,1 32,10 Z" />
+
+    <!-- Символ ₿ -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,16 L28,19 L26,19 L26,22 L28,22 L28,42 L26,42 L26,45 L28,45 L28,48 L31,48 L31,45 L35,45
+            C39,45 42,42 42,38 C42,35.5 40.5,33.5 38.5,32.5
+            C40,31.5 41,29.5 41,27 C41,23 38,20 34,20 L31,20 L31,16 Z
+            M31,24 L34,24 C36,24 37.5,25.5 37.5,27.5 C37.5,29.5 36,31 34,31 L31,31 Z
+            M31,34 L35,34 C37.5,34 39,35.5 39,38 C39,40.5 37.5,42 35,42 L31,42 Z" />
+
+    <!-- Вертикальные штрихи -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M33,16 L33,19 L36,19 L36,16 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M33,45 L33,48 L36,48 L36,45 Z" />
+
+</vector>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Иконка USDT TRC-20 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+
+    <!-- Зелёный круг -->
+    <path
+        android:fillColor="#26A17B"
+        android:pathData="M16,1 A15,15 0 1,1 16,31 A15,15 0 1,1 16,1 Z" />
+
+    <!-- Символ ₮ (Tether) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,9 L23,9 L23,12 L17.5,12 L17.5,24 L14.5,24 L14.5,12 L9,12 Z" />
+
+</vector>

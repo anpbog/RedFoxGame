@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Основной фон -->
+    <color name="background">#FF1A1A2E</color>
+    <color name="surface">#FF16213E</color>
+    <color name="surface_variant">#FF0F3460</color>
+
+    <!-- Основные цвета -->
+    <color name="primary_green">#FF00C853</color>
+    <color name="error_red">#FFFF1744</color>
+    <color name="accent_gold">#FFFFD700</color>
+
+    <!-- Бренд -->
+    <color name="redfox_orange">#FFFF6B35</color>
+
+    <!-- Текст -->
+    <color name="on_background">#FFFFFFFF</color>
+    <color name="on_background_secondary">#FFB0BEC5</color>
+    <color name="on_primary">#FF000000</color>
+
+    <!-- Состояния -->
+    <color name="disabled">#FF37474F</color>
+
+    <!-- Алиасы для удобства -->
+    <color name="up_color">@color/primary_green</color>
+    <color name="down_color">@color/error_red</color>
+    <color name="price_line">@color/accent_gold</color>
+
+    <!-- Полупрозрачные (для градиентов графика) -->
+    <color name="up_zone_transparent">#4D00C853</color>
+    <color name="down_zone_transparent">#4DFF1744</color>
+
+    <!-- Обратная совместимость -->
+    <color name="dark_background">@color/background</color>
+    <color name="dark_surface">@color/surface</color>
+</resources>

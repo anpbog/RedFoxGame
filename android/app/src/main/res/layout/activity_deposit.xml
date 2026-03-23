@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран пополнения -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <!-- Заголовок -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/deposit_title"
+            android:textColor="@color/on_background"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/orbitron_bold" />
+
+        <!-- Выбор сети (3 кнопки) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <!-- USDT TRC-20 -->
+            <LinearLayout
+                android:id="@+id/btnNetworkUsdt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_network_button"
+                android:padding="12dp"
+                android:layout_marginEnd="6dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_usdt"
+                    android:contentDescription="USDT" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="USDT\nTRC-20"
+                    android:textColor="@color/on_background"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+            <!-- Bitcoin -->
+            <LinearLayout
+                android:id="@+id/btnNetworkBtc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_network_button"
+                android:padding="12dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_btc"
+                    android:contentDescription="Bitcoin" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bitcoin"
+                    android:textColor="@color/on_background"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+            <!-- Ethereum -->
+            <LinearLayout
+                android:id="@+id/btnNetworkEth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/bg_network_button"
+                android:padding="12dp"
+                android:layout_marginStart="6dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_eth"
+                    android:contentDescription="Ethereum" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ethereum"
+                    android:textColor="@color/on_background"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/inter_semibold"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- QR-код -->
+        <FrameLayout
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_qr_placeholder">
+
+            <ImageView
+                android:id="@+id/imgQrCode"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp"
+                android:contentDescription="QR-код для пополнения" />
+
+        </FrameLayout>
+
+        <!-- Адрес + кнопка копировать -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_edit_text"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/txtDepositAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TXrk...a8Bm"
+                android:textColor="@color/on_background"
+                android:textSize="13sp"
+                android:fontFamily="@font/inter_regular"
+                android:singleLine="true"
+                android:ellipsize="middle" />
+
+            <ImageView
+                android:id="@+id/btnCopyAddress"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_copy"
+                android:padding="8dp"
+                android:contentDescription="@string/copy_address"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </LinearLayout>
+
+        <!-- Минимум -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Минимум: $5"
+            android:textColor="@color/on_background_secondary"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_regular"
+            android:layout_marginTop="8dp" />
+
+        <!-- Статус платежа -->
+        <LinearLayout
+            android:id="@+id/paymentStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/bg_pool_panel"
+            android:padding="12dp"
+            android:layout_marginTop="20dp">
+
+            <!-- Индикатор: ожидание → подтверждено → зачислено -->
+            <View
+                android:id="@+id/statusDot1"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@color/accent_gold" />
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="2dp"
+                android:background="@color/disabled"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp" />
+
+            <View
+                android:id="@+id/statusDot2"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@color/disabled" />
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="2dp"
+                android:background="@color/disabled"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp" />
+
+            <View
+                android:id="@+id/statusDot3"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@color/disabled" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtPaymentStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ожидание платежа..."
+            android:textColor="@color/on_background_secondary"
+            android:textSize="12sp"
+            android:fontFamily="@font/inter_regular"
+            android:layout_marginTop="4dp" />
+
+        <!-- Кнопка «Назад» -->
+        <TextView
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back"
+            android:textColor="@color/accent_gold"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_regular"
+            android:padding="12dp"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+</ScrollView>

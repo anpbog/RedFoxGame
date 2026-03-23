@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Главный экран — выбор режима игры -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="48dp"
+        android:paddingBottom="24dp">
+
+        <!-- Логотип лисы -->
+        <ImageView
+            android:id="@+id/logoImage"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_launcher_foreground"
+            android:contentDescription="@string/app_name" />
+
+        <!-- Название приложения -->
+        <TextView
+            android:id="@+id/appTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/accent_gold"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/orbitron_bold"
+            android:layout_marginTop="8dp" />
+
+        <!-- Карточка «Реальная игра» -->
+        <LinearLayout
+            android:id="@+id/cardRealGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@drawable/bg_card_green"
+            android:padding="24dp"
+            android:layout_marginTop="40dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <!-- Иконка BTC -->
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_btc_coin"
+                android:contentDescription="@string/real_game" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/real_game"
+                android:textColor="@color/on_background"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/orbitron_bold"
+                android:layout_marginTop="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/real_game_desc"
+                android:textColor="@color/on_background_secondary"
+                android:textSize="14sp"
+                android:fontFamily="@font/inter_regular"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+        <!-- Карточка «Демо игра» -->
+        <LinearLayout
+            android:id="@+id/cardDemoGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:background="@drawable/bg_card_gold"
+            android:padding="24dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <!-- Маскот -->
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_mascot"
+                android:contentDescription="@string/demo_game" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/demo_game"
+                android:textColor="@color/on_background"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/orbitron_bold"
+                android:layout_marginTop="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/demo_game_desc"
+                android:textColor="@color/on_background_secondary"
+                android:textSize="14sp"
+                android:fontFamily="@font/inter_regular"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+        <!-- Пружина — толкает кнопку поддержки вниз -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Кнопка поддержки -->
+        <TextView
+            android:id="@+id/btnSupport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/support_title"
+            android:textColor="@color/on_background_secondary"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_regular"
+            android:drawableStart="@drawable/ic_support"
+            android:drawablePadding="6dp"
+            android:padding="12dp"
+            android:layout_marginTop="24dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+</ScrollView>

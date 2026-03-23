@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Маскот — стилизованная рыжеволосая девушка с флагом -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Круглый фон -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M32,2 A30,30 0 1,1 32,62 A30,30 0 1,1 32,2 Z" />
+
+    <!-- Тёмный внутренний круг -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M32,5 A27,27 0 1,1 32,59 A27,27 0 1,1 32,5 Z" />
+
+    <!-- Волосы (рыжие) -->
+    <path
+        android:fillColor="#FF6B35"
+        android:pathData="M22,22 C22,14 26,10 32,10 C38,10 42,14 42,22
+            L44,28 L42,32 L40,26 L38,30 L36,24 L34,30 L32,24 L30,30 L28,24 L26,30 L24,26 L22,32 L20,28 Z" />
+
+    <!-- Лицо -->
+    <path
+        android:fillColor="#FFCC99"
+        android:pathData="M25,24 C25,20 28,17 32,17 C36,17 39,20 39,24
+            L39,32 C39,36 36,39 32,39 C28,39 25,36 25,32 Z" />
+
+    <!-- Левый глаз -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M28,27 A2,2 0 1,1 28,27.01 Z" />
+
+    <!-- Правый глаз -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M36,27 A2,2 0 1,1 36,27.01 Z" />
+
+    <!-- Улыбка -->
+    <path
+        android:strokeColor="#FF6B35"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:pathData="M29,33 Q32,36 35,33" />
+
+    <!-- Флажок (палочка) -->
+    <path
+        android:strokeColor="#B0BEC5"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:pathData="M44,18 L44,40" />
+
+    <!-- Флажок (полотно — зелёный) -->
+    <path
+        android:fillColor="#00C853"
+        android:pathData="M44,18 L54,22 L44,26 Z" />
+
+</vector>

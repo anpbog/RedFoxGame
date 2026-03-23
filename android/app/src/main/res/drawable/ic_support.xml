@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Иконка поддержки — знак вопроса в круге -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="@color/on_background_secondary">
+
+    <!-- Круг -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#B0BEC5"
+        android:strokeWidth="2"
+        android:pathData="M12,2 A10,10 0 1,1 12,22 A10,10 0 1,1 12,2 Z" />
+
+    <!-- Знак ? -->
+    <path
+        android:fillColor="#B0BEC5"
+        android:pathData="M12,6 C9.8,6 8,7.8 8,10 L10,10 C10,8.9 10.9,8 12,8 C13.1,8 14,8.9 14,10
+            C14,11.5 12.5,11.5 12.5,14 L11.5,14 C11.5,12 13,11.5 13,10 C13,9.4 12.6,9 12,9
+            C11.4,9 11,9.4 11,10 L9,10 C9,8.3 10.3,7 12,7 C13.7,7 15,8.3 15,10
+            C15,12 13,12 13,14 L11,14 L11,14 Z" />
+
+    <!-- Точка -->
+    <path
+        android:fillColor="#B0BEC5"
+        android:pathData="M11,16 L13,16 L13,18 L11,18 Z" />
+
+</vector>

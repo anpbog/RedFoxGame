@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Голова лисы — основная форма (рыжий) -->
+    <path
+        android:fillColor="#FF6B35"
+        android:pathData="M54,28 L32,52 L38,78 L54,82 L70,78 L76,52 Z" />
+
+    <!-- Левое ухо -->
+    <path
+        android:fillColor="#FF6B35"
+        android:pathData="M32,52 L26,24 L42,40 Z" />
+
+    <!-- Правое ухо -->
+    <path
+        android:fillColor="#FF6B35"
+        android:pathData="M76,52 L82,24 L66,40 Z" />
+
+    <!-- Внутренняя часть левого уха -->
+    <path
+        android:fillColor="#FF8F60"
+        android:pathData="M33,48 L29,30 L40,42 Z" />
+
+    <!-- Внутренняя часть правого уха -->
+    <path
+        android:fillColor="#FF8F60"
+        android:pathData="M75,48 L79,30 L68,42 Z" />
+
+    <!-- Белая мордочка (нижняя часть) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,56 L42,60 L44,74 L54,78 L64,74 L66,60 Z" />
+
+    <!-- Левый глаз — золотой -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M43,50 A4,5 0 1,1 43,50.01 Z" />
+
+    <!-- Правый глаз — золотой -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M65,50 A4,5 0 1,1 65,50.01 Z" />
+
+    <!-- Левый зрачок -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M44,50 A2,3 0 1,1 44,50.01 Z" />
+
+    <!-- Правый зрачок -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M66,50 A2,3 0 1,1 66,50.01 Z" />
+
+    <!-- Нос -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M51,62 L54,66 L57,62 Z" />
+
+</vector>

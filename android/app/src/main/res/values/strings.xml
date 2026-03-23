@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RedFox Game</string>
+
+    <!-- Авторизация -->
+    <string name="login_title">Вход</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Пароль</string>
+    <string name="login_button">Войти</string>
+    <string name="register_link">Регистрация</string>
+    <string name="forgot_password_link">Забыли пароль?</string>
+    <string name="register_title">Регистрация</string>
+    <string name="confirm_password_hint">Подтвердите пароль</string>
+    <string name="register_button">Зарегистрироваться</string>
+    <string name="reset_password_title">Восстановление пароля</string>
+    <string name="reset_password_button">Отправить ссылку</string>
+    <string name="back">Назад</string>
+
+    <!-- Главный экран -->
+    <string name="real_game">Реальная игра</string>
+    <string name="demo_game">Демо игра</string>
+    <string name="real_game_desc">Играйте на реальные деньги</string>
+    <string name="demo_game_desc">Тренируйтесь без риска</string>
+
+    <!-- Игра -->
+    <string name="balance">Баланс</string>
+    <string name="deposit">Пополнить</string>
+    <string name="withdraw">Вывести</string>
+    <string name="pool_up">UP</string>
+    <string name="pool_down">DOWN</string>
+    <string name="place_bet">Поставить</string>
+    <string name="betting_phase">Приём ставок</string>
+    <string name="active_phase">Игра идёт</string>
+    <string name="calculating">Расчёт...</string>
+    <string name="potential_income">Потенциальный доход</string>
+    <string name="round_history">История раундов</string>
+    <string name="min_bet">МИН</string>
+    <string name="max_bet">МАКС</string>
+
+    <!-- Пополнение / Вывод -->
+    <string name="deposit_title">Пополнение</string>
+    <string name="withdraw_title">Вывод средств</string>
+    <string name="select_network">Выберите сеть</string>
+    <string name="copy_address">Копировать адрес</string>
+    <string name="enter_address">Введите адрес</string>
+    <string name="scan_qr">Сканировать QR</string>
+    <string name="amount">Сумма</string>
+    <string name="commission">Комиссия</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="kyc_required">Требуется верификация KYC</string>
+
+    <!-- Профиль -->
+    <string name="profile_title">Профиль</string>
+    <string name="nickname">Никнейм</string>
+    <string name="statistics">Статистика</string>
+    <string name="rounds_played">Раунды</string>
+    <string name="wins">Победы</string>
+    <string name="losses">Поражения</string>
+    <string name="profit">Профит</string>
+    <string name="saved_addresses">Сохранённые адреса</string>
+    <string name="change_password">Сменить пароль</string>
+    <string name="logout">Выйти</string>
+
+    <!-- Поддержка -->
+    <string name="support_title">Поддержка</string>
+    <string name="telegram_support">Telegram поддержка</string>
+    <string name="email_support">Email поддержки</string>
+    <string name="faq">Частые вопросы</string>
+
+    <!-- Валидация -->
+    <string name="error_email_invalid">Некорректный email</string>
+    <string name="error_password_short">Пароль минимум 8 символов</string>
+    <string name="error_passwords_mismatch">Пароли не совпадают</string>
+    <string name="error_field_required">Обязательное поле</string>
+</resources>

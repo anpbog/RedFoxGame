@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Флаг России — RU -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="20dp"
+    android:viewportWidth="28"
+    android:viewportHeight="20">
+
+    <!-- Белая полоса -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M0,0 L28,0 L28,6.67 L0,6.67 Z" />
+
+    <!-- Синяя полоса -->
+    <path
+        android:fillColor="#0039A6"
+        android:pathData="M0,6.67 L28,6.67 L28,13.33 L0,13.33 Z" />
+
+    <!-- Красная полоса -->
+    <path
+        android:fillColor="#D52B1E"
+        android:pathData="M0,13.33 L28,13.33 L28,20 L0,20 Z" />
+
+</vector>

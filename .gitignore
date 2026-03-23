@@ -1,0 +1,62 @@
+# === Документация проекта (локальная) ===
+docs/
+CLAUDE.md
+
+# === Память Claude ===
+.claude/
+
+# === Android build ===
+android/app/build/
+android/build/
+android/.gradle/
+*.apk
+*.aab
+*.ap_
+
+# === Локальные настройки ===
+android/local.properties
+*.local.properties
+
+# === Секреты и ключи ===
+*.env
+.env.*
+*.jks
+*.keystore
+*.key
+*.pem
+*.p12
+*.secret
+credentials.json
+google-services.json
+
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Gradle ===
+.gradle/
+gradle-app.setting
+!**/gradle-wrapper.jar
+!**/gradle-wrapper.properties
+
+# === Kotlin ===
+*.class
+*.jar
+!**/gradle-wrapper.jar
+
+# === Assets (локальные исходники дизайна) ===
+assets/raw/
+assets/psd/
+*.psd
+*.ai
+*.sketch
+*.fig

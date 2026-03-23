@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Экран профиля -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
+
+        <!-- Заголовок -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/profile_title"
+            android:textColor="@color/on_background"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/orbitron_bold" />
+
+        <!-- Аватар -->
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="20dp">
+
+            <ImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_avatar_circle"
+                android:padding="2dp"
+                android:contentDescription="Аватар"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- Бейдж камеры (смена аватара) -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/ic_camera"
+                android:contentDescription="Сменить аватар" />
+
+        </FrameLayout>
+
+        <!-- Никнейм + флаг -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/txtNickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Player123"
+                android:textColor="@color/on_background"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_semibold" />
+
+            <ImageView
+                android:id="@+id/imgCountryFlag"
+                android:layout_width="24dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_flag_ru"
+                android:layout_marginStart="8dp"
+                android:contentDescription="Страна" />
+
+        </LinearLayout>
+
+        <!-- Email + бейдж верификации -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/txtEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user@email.com"
+                android:textColor="@color/on_background_secondary"
+                android:textSize="13sp"
+                android:fontFamily="@font/inter_regular" />
+
+            <TextView
+                android:id="@+id/badgeEmailVerified"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Подтверждён"
+                android:textColor="@color/primary_green"
+                android:textSize="10sp"
+                android:fontFamily="@font/inter_semibold"
+                android:background="@drawable/bg_badge_green"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:layout_marginStart="8dp" />
+
+        </LinearLayout>
+
+        <!-- KYC статус -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_pool_panel"
+            android:padding="12dp"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="KYC"
+                android:textColor="@color/on_background"
+                android:textSize="14sp"
+                android:fontFamily="@font/inter_semibold" />
+
+            <TextView
+                android:id="@+id/txtKycStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Не пройдена"
+                android:textColor="@color/error_red"
+                android:textSize="13sp"
+                android:fontFamily="@font/inter_semibold" />
+
+        </LinearLayout>
+
+        <!-- Статистика -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_pool_panel"
+            android:padding="12dp"
+            android:layout_marginTop="12dp">
+
+            <!-- Раунды -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/txtRoundsPlayed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/on_background"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/orbitron_bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rounds_played"
+                    android:textColor="@color/on_background_secondary"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/inter_regular" />
+
+            </LinearLayout>
+
+            <!-- Победы -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/txtWins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/primary_green"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/orbitron_bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wins"
+                    android:textColor="@color/on_background_secondary"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/inter_regular" />
+
+            </LinearLayout>
+
+            <!-- Поражения -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/txtLosses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/error_red"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/orbitron_bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/losses"
+                    android:textColor="@color/on_background_secondary"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/inter_regular" />
+
+            </LinearLayout>
+
+            <!-- Профит -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/txtProfit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0"
+                    android:textColor="@color/accent_gold"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/orbitron_bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profit"
+                    android:textColor="@color/on_background_secondary"
+                    android:textSize="10sp"
+                    android:fontFamily="@font/inter_regular" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Сменить пароль -->
+        <TextView
+            android:id="@+id/btnChangePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/change_password"
+            android:textColor="@color/on_background"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_regular"
+            android:background="@drawable/bg_pool_panel"
+            android:padding="14dp"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <!-- Выйти -->
+        <TextView
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
+            android:textColor="@color/error_red"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_regular"
+            android:background="@drawable/bg_pool_panel"
+            android:padding="14dp"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+</ScrollView>

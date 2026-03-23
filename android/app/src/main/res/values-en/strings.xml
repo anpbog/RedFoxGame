@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RedFox Game</string>
+
+    <!-- Auth -->
+    <string name="login_title">Login</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Sign In</string>
+    <string name="register_link">Sign Up</string>
+    <string name="forgot_password_link">Forgot password?</string>
+    <string name="register_title">Registration</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="register_button">Sign Up</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="reset_password_button">Send link</string>
+    <string name="back">Back</string>
+
+    <!-- Main -->
+    <string name="real_game">Real Game</string>
+    <string name="demo_game">Demo Game</string>
+    <string name="real_game_desc">Play with real money</string>
+    <string name="demo_game_desc">Practice without risk</string>
+
+    <!-- Game -->
+    <string name="balance">Balance</string>
+    <string name="deposit">Deposit</string>
+    <string name="withdraw">Withdraw</string>
+    <string name="pool_up">UP</string>
+    <string name="pool_down">DOWN</string>
+    <string name="place_bet">Place Bet</string>
+    <string name="betting_phase">Betting</string>
+    <string name="active_phase">Game in progress</string>
+    <string name="calculating">Calculating...</string>
+    <string name="potential_income">Potential income</string>
+    <string name="round_history">Round history</string>
+    <string name="min_bet">MIN</string>
+    <string name="max_bet">MAX</string>
+
+    <!-- Deposit / Withdraw -->
+    <string name="deposit_title">Deposit</string>
+    <string name="withdraw_title">Withdrawal</string>
+    <string name="select_network">Select network</string>
+    <string name="copy_address">Copy address</string>
+    <string name="enter_address">Enter address</string>
+    <string name="scan_qr">Scan QR</string>
+    <string name="amount">Amount</string>
+    <string name="commission">Commission</string>
+    <string name="confirm">Confirm</string>
+    <string name="kyc_required">KYC verification required</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="nickname">Nickname</string>
+    <string name="statistics">Statistics</string>
+    <string name="rounds_played">Rounds</string>
+    <string name="wins">Wins</string>
+    <string name="losses">Losses</string>
+    <string name="profit">Profit</string>
+    <string name="saved_addresses">Saved addresses</string>
+    <string name="change_password">Change password</string>
+    <string name="logout">Log out</string>
+
+    <!-- Support -->
+    <string name="support_title">Support</string>
+    <string name="telegram_support">Telegram support</string>
+    <string name="email_support">Support email</string>
+    <string name="faq">FAQ</string>
+
+    <!-- Validation -->
+    <string name="error_email_invalid">Invalid email</string>
+    <string name="error_password_short">Password must be at least 8 characters</string>
+    <string name="error_passwords_mismatch">Passwords do not match</string>
+    <string name="error_field_required">Required field</string>
+</resources>
