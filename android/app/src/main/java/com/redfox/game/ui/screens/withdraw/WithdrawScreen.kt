@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -64,6 +65,7 @@ fun WithdrawScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkBackground)
+            .systemBarsPadding()
     ) {
         TopAppBar(
             title = { Text(stringResource(R.string.withdraw_title), color = TextPrimary) },

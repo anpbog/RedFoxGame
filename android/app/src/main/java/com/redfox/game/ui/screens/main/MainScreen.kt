@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -28,8 +29,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +61,7 @@ fun MainScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkBackground)
+            .systemBarsPadding()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -83,7 +87,7 @@ fun MainScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "RedFox Game",
+            text = stringResource(R.string.app_name),
             color = AccentGold,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
@@ -94,32 +98,36 @@ fun MainScreen(
         // Карточка «Реальная игра» — заблокирована
         GameCard(
             title = stringResource(R.string.real_game),
-            description = stringResource(R.string.real_game_desc),
+            description = stringResource(R.string.real_game_description),
             enabled = false,
-            badgeText = if (language == "ru") "Скоро" else "Soon",
+            badgeText = stringResource(R.string.badge_coming_soon),
+            showMascot = false,
             onClick = { }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Карточка «Демо игра» — активная
+        // Карточка «Демо игра» — активная, с маскотом
         GameCard(
             title = stringResource(R.string.demo_game),
-            description = stringResource(R.string.demo_game_desc),
+            description = stringResource(R.string.demo_game_description),
             enabled = true,
             badgeText = null,
+            showMascot = true,
             onClick = { onNavigateToGame("demo") }
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Кнопка поддержки
+        // Кнопка поддержки — поднята выше навбара
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = { onNavigateToSupport() },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
             ),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.padding(bottom = 16.dp)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,
@@ -143,6 +151,7 @@ private fun GameCard(
     description: String,
     enabled: Boolean,
     badgeText: String?,
+    showMascot: Boolean = false,
     onClick: () -> Unit
 ) {
     val borderColor = if (enabled) AccentGold else Disabled
@@ -151,25 +160,41 @@ private fun GameCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(bgColor)
-            .border(1.5.dp, borderColor, RoundedCornerShape(12.dp))
+            .border(1.5.dp, borderColor, RoundedCornerShape(16.dp))
             .clickable(enabled = enabled) { onClick() }
-            .padding(20.dp)
+            .padding(horizontal = 24.dp, vertical = 20.dp)
     ) {
-        Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(
+            horizontalAlignment = if (showMascot) Alignment.CenterHorizontally else Alignment.Start,
+            modifier = if (showMascot) Modifier.fillMaxWidth() else Modifier
+        ) {
+            // Иконка маскота по центру карточки над текстом
+            if (showMascot) {
+                Image(
+                    painter = painterResource(R.drawable.ic_mascot),
+                    contentDescription = null,
+                    modifier = Modifier.size(80.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = if (showMascot) Modifier.fillMaxWidth() else Modifier
+            ) {
                 Icon(
                     imageVector = if (enabled) Icons.Default.PlayArrow else Icons.Default.Lock,
                     contentDescription = null,
                     tint = if (enabled) AccentGold else Disabled,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(28.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = title,
                     color = if (enabled) TextPrimary else Disabled,
-                    fontSize = 20.sp,
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold
                 )
                 if (badgeText != null) {
@@ -188,11 +213,12 @@ private fun GameCard(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = description,
                 color = if (enabled) TextSecondary else Disabled,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                lineHeight = 20.sp
             )
         }
     }

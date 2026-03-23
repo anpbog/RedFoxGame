@@ -19,8 +19,9 @@
     <!-- Main -->
     <string name="real_game">Real Game</string>
     <string name="demo_game">Demo Game</string>
-    <string name="real_game_desc">Play with real money</string>
-    <string name="demo_game_desc">Practice without risk</string>
+    <string name="real_game_description">Predict the real BTC chart movement on a short interval. The winners\' pool will split 85%% of the losers\' pool.</string>
+    <string name="demo_game_description">Learn the platform and practice making predictions on a demo account</string>
+    <string name="badge_coming_soon">Soon</string>
 
     <!-- Connection -->
     <string name="no_connection">No server connection</string>
@@ -84,6 +85,7 @@
 
     <!-- Support -->
     <string name="support_title">Support</string>
+    <string name="support_telegram">@RedFoxTrading_Support</string>
     <string name="telegram_support">Telegram support</string>
     <string name="email_support">Support email</string>
     <string name="faq">FAQ</string>

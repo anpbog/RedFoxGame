@@ -67,6 +67,8 @@ import com.redfox.game.ui.theme.PoolDown
 import com.redfox.game.ui.theme.PoolUp
 import com.redfox.game.ui.theme.TextPrimary
 import com.redfox.game.ui.theme.TextSecondary
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -158,8 +160,6 @@ fun GameScreen(
                 balance = balance,
                 timer = timer,
                 phase = round.phase,
-                payoutUp = round.payoutUp,
-                payoutDown = round.payoutDown,
                 onDeposit = { showDepositDialog = true }
             )
 
@@ -250,68 +250,49 @@ private fun TopBar(
     balance: Double,
     timer: Int,
     phase: RoundPhase,
-    payoutUp: Double,
-    payoutDown: Double,
     onDeposit: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(DarkSurface)
+            .statusBarsPadding()
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Баланс
+        // Баланс + кнопка пополнения в одну строку
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = stringResource(R.string.balance),
                 color = TextSecondary,
                 fontSize = 10.sp
             )
-            Text(
-                text = formatMoney(balance),
-                color = AccentGold,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = formatMoney(balance),
+                    color = AccentGold,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                // Кнопка пополнить (демо) — рядом с балансом
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(AccentGold.copy(alpha = 0.2f))
+                        .clickable { onDeposit() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.deposit),
+                        tint = AccentGold,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
         }
-
-        // Кнопка пополнить (демо)
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(AccentGold.copy(alpha = 0.2f))
-                .clickable { onDeposit() },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(R.string.deposit),
-                tint = AccentGold,
-                modifier = Modifier.size(18.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        // Payout UP/DOWN
-        Column(horizontalAlignment = Alignment.End) {
-            Text(
-                text = "↑ ${String.format(Locale.US, "%.1fx", payoutUp)}",
-                color = PoolUp,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "↓ ${String.format(Locale.US, "%.1fx", payoutDown)}",
-                color = PoolDown,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
 
         // Таймер
         TimerCircle(seconds = timer, phase = phase)
@@ -386,7 +367,7 @@ private fun RoundHistoryRow(history: List<Round>) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "$arrow ${String.format(Locale.US, "%.1fx", payout)}",
+                    text = "$arrow${String.format(Locale.US, "%.0f%%", payout * 100)}",
                     color = color,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold
@@ -458,6 +439,11 @@ private fun PoolCard(
             .border(1.dp, color.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
             .padding(8.dp)
     ) {
+        // Формат: POOL UP  216%↑ payout / ↓170% payout  POOL DOWN
+        val isUp = label.contains("UP")
+        val arrow = if (isUp) "↑" else "↓"
+        val payoutText = "${String.format(Locale.US, "%.0f%%", payout * 100)}$arrow payout"
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = label,
@@ -467,9 +453,9 @@ private fun PoolCard(
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = "${String.format(Locale.US, "%.1f", payout)}x",
+                text = payoutText,
                 color = color,
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -544,6 +530,7 @@ private fun BetPanel(
         modifier = Modifier
             .fillMaxWidth()
             .background(DarkSurface)
+            .navigationBarsPadding()
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         // Регулятор суммы

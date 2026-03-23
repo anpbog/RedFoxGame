@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,7 +47,6 @@ import com.redfox.game.ui.theme.AccentGold
 import com.redfox.game.ui.theme.DarkBackground
 import com.redfox.game.ui.theme.DarkCard
 import com.redfox.game.ui.theme.DarkSurface
-import com.redfox.game.ui.theme.PoolUp
 import com.redfox.game.ui.theme.TextPrimary
 import com.redfox.game.ui.theme.TextSecondary
 
@@ -62,6 +61,7 @@ fun SupportScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(DarkBackground)
+            .systemBarsPadding()
     ) {
         TopAppBar(
             title = { Text(stringResource(R.string.support_title), color = TextPrimary) },
@@ -86,7 +86,7 @@ fun SupportScreen(
                     .clip(RoundedCornerShape(12.dp))
                     .background(DarkCard)
                     .clickable {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/redfoxgame_support")))
+                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/RedFoxTrading_Support")))
                     }
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -95,29 +95,7 @@ fun SupportScreen(
                 Spacer(Modifier.width(12.dp))
                 Column {
                     Text(stringResource(R.string.telegram_support), color = TextPrimary, fontWeight = FontWeight.SemiBold)
-                    Text("@redfoxgame_support", color = TextSecondary, fontSize = 13.sp)
-                }
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            // Email
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(DarkCard)
-                    .clickable {
-                        context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:support@redfoxgame.com")))
-                    }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(Icons.Default.Email, null, tint = AccentGold, modifier = Modifier.size(24.dp))
-                Spacer(Modifier.width(12.dp))
-                Column {
-                    Text(stringResource(R.string.email_support), color = TextPrimary, fontWeight = FontWeight.SemiBold)
-                    Text("support@redfoxgame.com", color = TextSecondary, fontSize = 13.sp)
+                    Text(stringResource(R.string.support_telegram), color = TextSecondary, fontSize = 13.sp)
                 }
             }
 
