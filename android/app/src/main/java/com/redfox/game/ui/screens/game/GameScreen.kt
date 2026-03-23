@@ -1,6 +1,11 @@
 package com.redfox.game.ui.screens.game
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -33,9 +38,13 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +57,7 @@ import com.redfox.game.domain.model.BetDirection
 import com.redfox.game.domain.model.Round
 import com.redfox.game.domain.model.RoundPhase
 import com.redfox.game.ui.components.BtcChart
+import com.redfox.game.ui.components.DemoDepositDialog
 import com.redfox.game.ui.theme.AccentGold
 import com.redfox.game.ui.theme.DarkBackground
 import com.redfox.game.ui.theme.DarkCard
@@ -78,6 +88,64 @@ fun GameScreen(
     val roundHistory by viewModel.roundHistory.collectAsState()
     val showResult by viewModel.showResultOverlay.collectAsState()
     val lastResult by viewModel.lastResult.collectAsState()
+    val isConnected by viewModel.isConnected.collectAsState()
+    val isPaused by viewModel.isPaused.collectAsState()
+    var showDepositDialog by remember { mutableStateOf(false) }
+    var showEmptyBalanceDialog by remember { mutableStateOf(false) }
+    var lastKnownBalance by remember { mutableStateOf(balance) }
+
+    // Отслеживаем баланс = 0 после проигрыша
+    if (balance <= 0.0 && lastKnownBalance > 0.0) {
+        showEmptyBalanceDialog = true
+    }
+    lastKnownBalance = balance
+
+    // Диалог пополнения демо-счёта
+    if (showDepositDialog) {
+        DemoDepositDialog(
+            currentBalance = balance,
+            onDeposit = { amount -> viewModel.addDemoBalance(amount) },
+            onDismiss = { showDepositDialog = false }
+        )
+    }
+
+    // Диалог «Баланс исчерпан»
+    if (showEmptyBalanceDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showEmptyBalanceDialog = false },
+            containerColor = DarkSurface,
+            title = {
+                Text(
+                    text = stringResource(R.string.balance_empty_title),
+                    color = com.redfox.game.ui.theme.ErrorRed
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.balance_empty_message, String.format("%,.0f", com.redfox.game.util.Constants.DEMO_START_BALANCE)),
+                    color = com.redfox.game.ui.theme.TextSecondary
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.addDemoBalance(com.redfox.game.util.Constants.DEMO_START_BALANCE)
+                        showEmptyBalanceDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentGold)
+                ) {
+                    Text(stringResource(R.string.demo_deposit_button), color = Color.Black)
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { showEmptyBalanceDialog = false }
+                ) {
+                    Text(stringResource(R.string.back), color = TextSecondary)
+                }
+            }
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -92,18 +160,48 @@ fun GameScreen(
                 phase = round.phase,
                 payoutUp = round.payoutUp,
                 payoutDown = round.payoutDown,
-                onDeposit = { viewModel.addDemoBalance(1000.0) }
+                onDeposit = { showDepositDialog = true }
             )
 
-            // === График BTC ===
-            BtcChart(
-                trades = priceBuffer,
-                startPrice = round.startPrice,
-                phase = round.phase,
+            // === График BTC + плашка соединения ===
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-            )
+            ) {
+                BtcChart(
+                    trades = priceBuffer,
+                    startPrice = round.startPrice,
+                    phase = round.phase,
+                    modifier = Modifier.fillMaxSize(),
+                    labelWaiting = stringResource(R.string.chart_waiting),
+                    labelBtcLive = stringResource(R.string.chart_btc_live),
+                    labelStart = stringResource(R.string.chart_start)
+                )
+
+                // Плашка «Нет соединения»
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = !isConnected,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                    modifier = Modifier.align(Alignment.TopCenter)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(com.redfox.game.ui.theme.ErrorRed.copy(alpha = 0.9f))
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.no_connection),
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
 
             // === Лента истории раундов ===
             RoundHistoryRow(history = roundHistory)
@@ -220,7 +318,7 @@ private fun TopBar(
     }
 }
 
-// === Круглый таймер ===
+// === Круглый таймер с пульсацией ===
 @Composable
 private fun TimerCircle(seconds: Int, phase: RoundPhase) {
     val color = when (phase) {
@@ -229,9 +327,27 @@ private fun TimerCircle(seconds: Int, phase: RoundPhase) {
         RoundPhase.CALCULATING -> PoolDown
     }
 
+    // Пульсация на последних 10 секундах
+    val isPulsing = seconds in 1..10
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(500),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseScale"
+    )
+    val scale = if (isPulsing) pulseScale else 1f
+
     Box(
         modifier = Modifier
             .size(44.dp)
+            .then(
+                if (isPulsing) Modifier.graphicsLayer(scaleX = scale, scaleY = scale)
+                else Modifier
+            )
             .border(2.dp, color, CircleShape),
         contentAlignment = Alignment.Center
     ) {

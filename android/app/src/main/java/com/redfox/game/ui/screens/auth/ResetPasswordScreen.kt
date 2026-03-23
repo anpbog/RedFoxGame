@@ -82,7 +82,7 @@ fun ResetPasswordScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Введите email, на который придёт ссылка для сброса пароля",
+                    text = stringResource(R.string.reset_password_instruction),
                     style = MaterialTheme.typography.bodyLarge,
                     color = TextSecondary,
                     textAlign = TextAlign.Center
@@ -158,7 +158,7 @@ fun ResetPasswordScreen(
                         .padding(16.dp),
                     action = {
                         Text(
-                            text = "OK",
+                            text = stringResource(R.string.ok),
                             color = AccentGold,
                             modifier = Modifier.clickable { viewModel.clearError() }
                         )

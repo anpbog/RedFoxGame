@@ -3,6 +3,7 @@ package com.redfox.game.data.repository
 import com.redfox.game.domain.model.Bet
 import com.redfox.game.domain.model.BetDirection
 import com.redfox.game.domain.model.BotPlayer
+import java.util.Collections
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -32,8 +33,8 @@ class BotGenerator @Inject constructor() {
         "\uD83C\uDDEE\uD83C\uDDF3"  // IN
     )
 
-    // Использованные имена в текущем раунде (чтобы не повторять)
-    private val usedNames = mutableSetOf<String>()
+    // Использованные имена в текущем раунде (thread-safe)
+    private val usedNames: MutableSet<String> = Collections.synchronizedSet(mutableSetOf())
 
     fun resetForNewRound() {
         usedNames.clear()

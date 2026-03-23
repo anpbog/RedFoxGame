@@ -14,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -40,11 +41,14 @@ fun BtcChart(
     trades: List<BtcTrade>,
     startPrice: Double? = null,
     phase: RoundPhase = RoundPhase.BETTING,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    labelWaiting: String = "Ожидание данных...",
+    labelBtcLive: String = "BTC Live",
+    labelStart: String = "START"
 ) {
     if (trades.isEmpty()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
-            Text("Ожидание данных...", color = TextSecondary, fontSize = 14.sp)
+            Text(labelWaiting, color = TextSecondary, fontSize = 14.sp)
         }
         return
     }
@@ -155,11 +159,11 @@ fun BtcChart(
 
                 // Метка START слева
                 drawContext.canvas.nativeCanvas.drawText(
-                    "START",
+                    labelStart,
                     4.dp.toPx(),
                     startY - 4.dp.toPx(),
                     android.graphics.Paint().apply {
-                        color = AccentGold.hashCode()
+                        color = AccentGold.toArgb()
                         textSize = 10.sp.toPx()
                         isAntiAlias = true
                     }
@@ -209,7 +213,7 @@ fun BtcChart(
                     lastX - 5.dp.toPx(),
                     lastY + 5.dp.toPx(),
                     android.graphics.Paint().apply {
-                        color = android.graphics.Color.parseColor("#FFD700")
+                        color = AccentGold.toArgb()
                         textSize = 12.sp.toPx()
                         isAntiAlias = true
                         isFakeBoldText = true
@@ -231,7 +235,7 @@ fun BtcChart(
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Text(
-                text = "BTC Live $${priceFormat.format(latestPrice)}",
+                text = "$labelBtcLive $${priceFormat.format(latestPrice)}",
                 color = ChartLine,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
@@ -275,7 +279,7 @@ private fun DrawScope.drawPriceScale(
     val gridLines = 5
     val yRange = yMax - yMin
     val paint = android.graphics.Paint().apply {
-        color = android.graphics.Color.parseColor("#8B949E")
+        color = TextTertiary.toArgb()
         textSize = 10.sp.toPx()
         isAntiAlias = true
     }

@@ -1,5 +1,6 @@
 package com.redfox.game.di
 
+import com.redfox.game.BuildConfig
 import com.redfox.game.data.remote.api.AuthApi
 import com.redfox.game.util.Constants
 import dagger.Module
@@ -21,7 +22,8 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                    else HttpLoggingInterceptor.Level.NONE
         }
         return OkHttpClient.Builder()
             .addInterceptor(logging)

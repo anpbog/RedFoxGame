@@ -22,7 +22,8 @@ fun RedFoxNavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        // Демо-версия: стартуем с главного экрана (авторизация в Части 2)
+        startDestination = Screen.Main.route
     ) {
         composable(Screen.Login.route) {
             LoginScreen(

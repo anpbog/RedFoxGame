@@ -22,6 +22,19 @@
     <string name="real_game_desc">Play with real money</string>
     <string name="demo_game_desc">Practice without risk</string>
 
+    <!-- Connection -->
+    <string name="no_connection">No server connection</string>
+    <string name="reconnecting">Reconnecting…</string>
+
+    <!-- Balance -->
+    <string name="balance_empty_title">Balance depleted</string>
+    <string name="balance_empty_message">Top up demo account with $%s?</string>
+
+    <!-- Chart -->
+    <string name="chart_waiting">Waiting for data…</string>
+    <string name="chart_btc_live">BTC Live</string>
+    <string name="chart_start">START</string>
+
     <!-- Game -->
     <string name="balance">Balance</string>
     <string name="deposit">Deposit</string>
@@ -36,6 +49,12 @@
     <string name="round_history">Round history</string>
     <string name="min_bet">MIN</string>
     <string name="max_bet">MAX</string>
+
+    <!-- Demo deposit -->
+    <string name="demo_deposit_title">Top Up Demo Account</string>
+    <string name="demo_deposit_hint">This is virtual money for practice</string>
+    <string name="demo_deposit_button">Top Up</string>
+    <string name="demo_deposit_max_reached">Maximum balance $50,000</string>
 
     <!-- Deposit / Withdraw -->
     <string name="deposit_title">Deposit</string>
@@ -66,6 +85,10 @@
     <string name="telegram_support">Telegram support</string>
     <string name="email_support">Support email</string>
     <string name="faq">FAQ</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="reset_password_instruction">Enter your email to receive a password reset link</string>
 
     <!-- Validation -->
     <string name="error_email_invalid">Invalid email</string>
