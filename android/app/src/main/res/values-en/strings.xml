@@ -49,6 +49,8 @@
     <string name="round_history">Round history</string>
     <string name="min_bet">MIN</string>
     <string name="max_bet">MAX</string>
+    <string name="result_win">WIN!</string>
+    <string name="result_lose">LOSE</string>
 
     <!-- Demo deposit -->
     <string name="demo_deposit_title">Top Up Demo Account</string>

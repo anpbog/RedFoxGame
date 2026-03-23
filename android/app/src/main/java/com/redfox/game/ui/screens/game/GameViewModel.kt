@@ -5,14 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.redfox.game.data.local.datastore.DemoBalanceManager
 import com.redfox.game.data.remote.websocket.BtcPriceSocket
 import com.redfox.game.data.remote.websocket.BtcTrade
-import com.redfox.game.data.repository.BotGenerator
 import com.redfox.game.data.repository.DemoGameService
 import com.redfox.game.data.repository.RoundResult
 import com.redfox.game.domain.model.Bet
 import com.redfox.game.domain.model.BetDirection
 import com.redfox.game.domain.model.BotPlayer
 import com.redfox.game.domain.model.Round
-import com.redfox.game.domain.model.RoundPhase
 import com.redfox.game.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
