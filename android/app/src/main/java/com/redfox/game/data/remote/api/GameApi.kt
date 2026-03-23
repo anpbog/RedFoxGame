@@ -1,9 +1,5 @@
 package com.redfox.game.data.remote.api
 
-import com.redfox.game.data.remote.dto.AuthDto.BalanceResponse
-import com.redfox.game.data.remote.dto.AuthDto.MessageResponse
-import com.redfox.game.data.remote.dto.AuthDto.PlaceBetRequest
-import com.redfox.game.data.remote.dto.AuthDto.RoundResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
