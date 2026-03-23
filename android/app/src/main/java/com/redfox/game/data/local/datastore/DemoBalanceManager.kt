@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.redfox.game.util.Constants
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,11 +22,8 @@ class DemoBalanceManager @Inject constructor(
     }
 
     suspend fun getBalance(): Double {
-        var result = Constants.DEMO_START_BALANCE
-        dataStore.data.collect { prefs ->
-            result = prefs[balanceKey] ?: Constants.DEMO_START_BALANCE
-        }
-        return result
+        val prefs = dataStore.data.first()
+        return prefs[balanceKey] ?: Constants.DEMO_START_BALANCE
     }
 
     suspend fun updateBalance(newBalance: Double) {
@@ -37,7 +35,7 @@ class DemoBalanceManager @Inject constructor(
     suspend fun addToBalance(amount: Double) {
         dataStore.edit { prefs ->
             val current = prefs[balanceKey] ?: Constants.DEMO_START_BALANCE
-            prefs[balanceKey] = current + amount
+            prefs[balanceKey] = (current + amount).coerceAtMost(Constants.DEMO_MAX_BALANCE)
         }
     }
 

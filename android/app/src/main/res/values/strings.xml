@@ -22,6 +22,19 @@
     <string name="real_game_desc">Играйте на реальные деньги</string>
     <string name="demo_game_desc">Тренируйтесь без риска</string>
 
+    <!-- Соединение -->
+    <string name="no_connection">Нет соединения с сервером</string>
+    <string name="reconnecting">Переподключение…</string>
+
+    <!-- Баланс -->
+    <string name="balance_empty_title">Баланс исчерпан</string>
+    <string name="balance_empty_message">Пополнить демо-счёт на $%s?</string>
+
+    <!-- График -->
+    <string name="chart_waiting">Ожидание данных…</string>
+    <string name="chart_btc_live">BTC Live</string>
+    <string name="chart_start">START</string>
+
     <!-- Игра -->
     <string name="balance">Баланс</string>
     <string name="deposit">Пополнить</string>
@@ -36,6 +49,12 @@
     <string name="round_history">История раундов</string>
     <string name="min_bet">МИН</string>
     <string name="max_bet">МАКС</string>
+
+    <!-- Демо пополнение -->
+    <string name="demo_deposit_title">Пополнить демо-счёт</string>
+    <string name="demo_deposit_hint">Это виртуальные деньги для тренировки</string>
+    <string name="demo_deposit_button">Пополнить</string>
+    <string name="demo_deposit_max_reached">Максимальный баланс $50,000</string>
 
     <!-- Пополнение / Вывод -->
     <string name="deposit_title">Пополнение</string>
@@ -66,6 +85,10 @@
     <string name="telegram_support">Telegram поддержка</string>
     <string name="email_support">Email поддержки</string>
     <string name="faq">Частые вопросы</string>
+
+    <!-- Общие -->
+    <string name="ok">OK</string>
+    <string name="reset_password_instruction">Введите email, на который придёт ссылка для сброса пароля</string>
 
     <!-- Валидация -->
     <string name="error_email_invalid">Некорректный email</string>

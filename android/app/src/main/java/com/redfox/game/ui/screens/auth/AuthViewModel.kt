@@ -34,11 +34,7 @@ class AuthViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    init {
-        checkAutoLogin()
-    }
-
-    private fun checkAutoLogin() {
+    fun checkAutoLogin() {
         viewModelScope.launch {
             if (authRepository.isLoggedIn()) {
                 val result = authRepository.refreshToken()

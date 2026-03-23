@@ -4,6 +4,7 @@ import com.redfox.game.util.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +40,7 @@ class BtcPriceSocket @Inject constructor(
     private val _latestPrice = MutableStateFlow(0.0)
     val latestPrice: StateFlow<Double> = _latestPrice.asStateFlow()
 
+    private val bufferLock = Any()
     private var webSocket: WebSocket? = null
     private var shouldReconnect = true
 
@@ -52,6 +54,11 @@ class BtcPriceSocket @Inject constructor(
         webSocket?.close(1000, "Closed by client")
         webSocket = null
         _isConnected.value = false
+    }
+
+    fun destroy() {
+        disconnect()
+        scope.cancel()
     }
 
     private fun doConnect() {
@@ -73,13 +80,15 @@ class BtcPriceSocket @Inject constructor(
 
                     _latestPrice.value = price
 
-                    // Обновляем буфер (последние 120 точек)
-                    val current = _priceBuffer.value.toMutableList()
-                    current.add(trade)
-                    if (current.size > BUFFER_SIZE) {
-                        current.removeAt(0)
+                    // Обновляем буфер (последние 120 точек) — атомарно
+                    synchronized(bufferLock) {
+                        val current = _priceBuffer.value.toMutableList()
+                        current.add(trade)
+                        if (current.size > BUFFER_SIZE) {
+                            current.removeAt(0)
+                        }
+                        _priceBuffer.value = current
                     }
-                    _priceBuffer.value = current
 
                     scope.launch {
                         _trades.emit(trade)

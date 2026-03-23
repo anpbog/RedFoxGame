@@ -70,6 +70,10 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        viewModel.checkAutoLogin()
+    }
+
     LaunchedEffect(uiState.isLoggedIn) {
         if (uiState.isLoggedIn) onNavigateToMain()
     }
@@ -99,7 +103,7 @@ fun LoginScreen(
                     contentDescription = "RU",
                     modifier = Modifier
                         .size(32.dp)
-                        .clickable { }
+                        .clickable { /* TODO: переключение языка в Части 2 */ }
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Image(
@@ -108,7 +112,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .size(32.dp)
                         .alpha(0.4f)
-                        .clickable { }
+                        .clickable { /* TODO: переключение языка в Части 2 */ }
                 )
             }
 
@@ -254,7 +258,7 @@ fun LoginScreen(
                     .padding(16.dp),
                 action = {
                     Text(
-                        text = "OK",
+                        text = stringResource(R.string.ok),
                         color = AccentGold,
                         modifier = Modifier.clickable { viewModel.clearError() }
                     )

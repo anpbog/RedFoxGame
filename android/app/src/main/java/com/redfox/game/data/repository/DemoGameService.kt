@@ -1,6 +1,8 @@
 package com.redfox.game.data.repository
 
 import com.redfox.game.data.local.datastore.DemoBalanceManager
+import com.redfox.game.data.local.db.DemoRoundDao
+import com.redfox.game.data.local.db.DemoRoundEntity
 import com.redfox.game.data.remote.websocket.BtcPriceSocket
 import com.redfox.game.domain.model.Bet
 import com.redfox.game.domain.model.BetDirection
@@ -12,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,7 +37,8 @@ data class RoundResult(
 class DemoGameService @Inject constructor(
     private val btcPriceSocket: BtcPriceSocket,
     private val balanceManager: DemoBalanceManager,
-    private val botGenerator: BotGenerator
+    private val botGenerator: BotGenerator,
+    private val demoRoundDao: DemoRoundDao
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var roundJob: Job? = null
@@ -78,13 +82,27 @@ class DemoGameService @Inject constructor(
         if (isRunning) return
         isRunning = true
         btcPriceSocket.connect()
+
+        // Подписка на состояние соединения → пауза при обрыве
+        scope.launch {
+            btcPriceSocket.isConnected.collect { connected ->
+                _isPaused.value = !connected
+            }
+        }
+
         startNewRound()
     }
 
     fun stop() {
         isRunning = false
         roundJob?.cancel()
+        botJob?.cancel()
         btcPriceSocket.disconnect()
+    }
+
+    fun destroy() {
+        stop()
+        scope.cancel()
     }
 
     fun placeBet(direction: BetDirection, amount: Double) {
@@ -290,11 +308,33 @@ class DemoGameService @Inject constructor(
         // Emit результат
         _roundResult.emit(RoundResult(finalRound, playerBet, playerPayout, isWin))
 
-        // Добавляем в историю
+        // Добавляем в историю (in-memory)
         val history = _roundHistory.value.toMutableList()
         history.add(0, finalRound)
         if (history.size > 10) history.removeLast()
         _roundHistory.value = history
+
+        // Сохраняем в Room
+        val savedPayout = when {
+            playerBet?.direction == BetDirection.UP -> finalRound.payoutUp
+            playerBet?.direction == BetDirection.DOWN -> finalRound.payoutDown
+            result == BetDirection.UP -> finalRound.payoutUp
+            else -> finalRound.payoutDown
+        }
+        demoRoundDao.insert(
+            DemoRoundEntity(
+                startPrice = startPrice,
+                endPrice = endPrice,
+                result = result.name,
+                playerBetDirection = playerBet?.direction?.name,
+                playerBetAmount = playerBet?.amount,
+                playerPayout = if (isWin) playerPayout else null,
+                poolUpTotal = finalRound.poolUp,
+                poolDownTotal = finalRound.poolDown,
+                payoutMultiplier = savedPayout,
+                timestamp = System.currentTimeMillis()
+            )
+        )
 
         // Пауза 2 секунды для показа результата
         delay(2000)

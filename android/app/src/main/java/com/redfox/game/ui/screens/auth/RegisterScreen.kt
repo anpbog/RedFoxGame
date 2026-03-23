@@ -230,7 +230,7 @@ fun RegisterScreen(
                         .padding(16.dp),
                     action = {
                         Text(
-                            text = "OK",
+                            text = stringResource(R.string.ok),
                             color = AccentGold,
                             modifier = Modifier.clickable { viewModel.clearError() }
                         )

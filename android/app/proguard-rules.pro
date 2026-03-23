@@ -11,3 +11,7 @@
 
 # Room
 -keep class * extends androidx.room.RoomDatabase
+
+# OkHttp WebSocket
+-keep class okhttp3.internal.ws.** { *; }
+-dontwarn okhttp3.internal.platform.**
