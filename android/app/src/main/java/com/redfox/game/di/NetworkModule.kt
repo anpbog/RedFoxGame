@@ -2,6 +2,7 @@ package com.redfox.game.di
 
 import com.redfox.game.BuildConfig
 import com.redfox.game.data.remote.api.AuthApi
+import com.redfox.game.data.remote.api.GameApi
 import com.redfox.game.util.Constants
 import dagger.Module
 import dagger.Provides
@@ -47,5 +48,11 @@ object NetworkModule {
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGameApi(retrofit: Retrofit): GameApi {
+        return retrofit.create(GameApi::class.java)
     }
 }

@@ -49,6 +49,8 @@
     <string name="round_history">История раундов</string>
     <string name="min_bet">МИН</string>
     <string name="max_bet">МАКС</string>
+    <string name="result_win">ПОБЕДА!</string>
+    <string name="result_lose">ПРОИГРЫШ</string>
 
     <!-- Демо пополнение -->
     <string name="demo_deposit_title">Пополнить демо-счёт</string>

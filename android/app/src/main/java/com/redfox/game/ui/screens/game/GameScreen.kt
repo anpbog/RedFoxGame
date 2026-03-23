@@ -691,7 +691,7 @@ private fun ResultOverlay(
     onDismiss: () -> Unit
 ) {
     val bgColor = if (isWin) PoolUp.copy(alpha = 0.85f) else PoolDown.copy(alpha = 0.85f)
-    val title = if (isWin) "WIN!" else "LOSE"
+    val title = if (isWin) stringResource(R.string.result_win) else stringResource(R.string.result_lose)
     val sign = if (isWin) "+" else "-"
 
     Box(

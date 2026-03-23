@@ -33,6 +33,7 @@ import com.redfox.game.ui.theme.PoolDown
 import com.redfox.game.ui.theme.PoolUp
 import com.redfox.game.ui.theme.TextPrimary
 import com.redfox.game.ui.theme.TextSecondary
+import com.redfox.game.ui.theme.TextTertiary
 import com.redfox.game.ui.theme.UpZoneTransparent
 import java.text.DecimalFormat
 
