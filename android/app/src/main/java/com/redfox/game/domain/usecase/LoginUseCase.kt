@@ -5,6 +5,10 @@ import com.redfox.game.data.repository.AuthRepository
 import com.redfox.game.domain.model.User
 import javax.inject.Inject
 
+/**
+ * UseCase для входа в аккаунт.
+ * Валидация полей + вызов репозитория (локальная авторизация через DataStore).
+ */
 class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {

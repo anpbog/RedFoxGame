@@ -1,93 +1,114 @@
 package com.redfox.game.ui.screens.profile
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.redfox.game.data.remote.api.ChangePasswordRequest
-import com.redfox.game.data.remote.api.ProfileApi
-import com.redfox.game.data.remote.api.UpdateProfileRequest
+import com.redfox.game.data.local.db.DemoRoundDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class ProfileUiState(
-    val email: String = "",
-    val nickname: String = "",
-    val country: String = "",
-    val balanceReal: Double = 0.0,
-    val balanceDemo: Double = 0.0,
-    val kycStatus: String = "NONE",
-    val emailVerified: Boolean = false,
-    val roundsPlayed: Int = 0,
+// Период фильтрации статистики
+enum class StatsPeriod { DAY, MONTH, ALL }
+
+// Режим статистики: демо или реальная
+enum class StatsMode { DEMO, REAL }
+
+// Данные статистики
+data class ProfileStats(
+    val totalRounds: Int = 0,
     val wins: Int = 0,
     val losses: Int = 0,
     val profit: Double = 0.0,
-    val isLoading: Boolean = false,
-    val error: String? = null,
-    val passwordChanged: Boolean = false
+    val avgBet: Double = 0.0
+)
+
+// Состояние экрана профиля
+data class ProfileState(
+    val email: String = "",
+    val period: StatsPeriod = StatsPeriod.ALL,
+    val mode: StatsMode = StatsMode.DEMO,
+    val stats: ProfileStats = ProfileStats(),
+    val isLoading: Boolean = false
 )
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileApi: ProfileApi
+    private val demoRoundDao: DemoRoundDao,
+    private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ProfileUiState())
-    val state: StateFlow<ProfileUiState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(ProfileState())
+    val state: StateFlow<ProfileState> = _state
 
     init {
-        loadProfile()
+        loadEmail()
+        loadStats()
     }
 
-    fun loadProfile() {
+    // Загрузка email из DataStore
+    private fun loadEmail() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
-            try {
-                val profile = profileApi.getProfile()
-                _state.value = ProfileUiState(
-                    email = profile.email,
-                    nickname = profile.nickname,
-                    country = profile.country,
-                    balanceReal = profile.balance_real,
-                    balanceDemo = profile.balance_demo,
-                    kycStatus = profile.kyc_status,
-                    emailVerified = profile.email_verified,
-                    roundsPlayed = profile.rounds_played,
-                    wins = profile.wins,
-                    losses = profile.losses,
-                    profit = profile.profit,
-                    isLoading = false
-                )
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(isLoading = false, error = e.message)
+            dataStore.data.collect { prefs ->
+                val email = prefs[stringPreferencesKey("auth_email")] ?: ""
+                _state.value = _state.value.copy(email = email)
             }
         }
     }
 
-    fun updateProfile(nickname: String?, country: String?) {
+    // Выбор периода фильтрации
+    fun setPeriod(period: StatsPeriod) {
+        _state.value = _state.value.copy(period = period)
+        loadStats()
+    }
+
+    // Переключение демо/реал
+    fun setMode(mode: StatsMode) {
+        _state.value = _state.value.copy(mode = mode)
+        loadStats()
+    }
+
+    // Загрузка статистики из Room
+    fun loadStats() {
         viewModelScope.launch {
-            try {
-                val updated = profileApi.updateProfile(UpdateProfileRequest(nickname, country))
-                _state.value = _state.value.copy(
-                    nickname = updated.nickname,
-                    country = updated.country
-                )
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(error = e.message)
+            _state.value = _state.value.copy(isLoading = true)
+            val fromTimestamp = when (_state.value.period) {
+                StatsPeriod.DAY -> System.currentTimeMillis() - 24 * 60 * 60 * 1000L
+                StatsPeriod.MONTH -> System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000L
+                StatsPeriod.ALL -> 0L
             }
+
+            // Пока только демо-статистика (реальная будет после бэкенда)
+            val stats = if (_state.value.mode == StatsMode.DEMO) {
+                ProfileStats(
+                    totalRounds = demoRoundDao.getRoundsForPeriod(fromTimestamp),
+                    wins = demoRoundDao.getWinsForPeriod(fromTimestamp),
+                    losses = demoRoundDao.getLossesForPeriod(fromTimestamp),
+                    profit = demoRoundDao.getProfitForPeriod(fromTimestamp),
+                    avgBet = demoRoundDao.getAvgBetForPeriod(fromTimestamp)
+                )
+            } else {
+                // Реальная статистика — заглушка до бэкенда
+                ProfileStats()
+            }
+
+            _state.value = _state.value.copy(stats = stats, isLoading = false)
         }
     }
 
-    fun changePassword(currentPassword: String, newPassword: String) {
+    // Выход из аккаунта
+    fun logout() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null, passwordChanged = false)
-            try {
-                profileApi.changePassword(ChangePasswordRequest(currentPassword, newPassword))
-                _state.value = _state.value.copy(isLoading = false, passwordChanged = true)
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(isLoading = false, error = e.message)
+            dataStore.edit { prefs ->
+                prefs.remove(stringPreferencesKey("auth_email"))
+                prefs.remove(stringPreferencesKey("auth_password_hash"))
+                prefs.remove(booleanPreferencesKey("auth_is_logged_in"))
             }
         }
     }

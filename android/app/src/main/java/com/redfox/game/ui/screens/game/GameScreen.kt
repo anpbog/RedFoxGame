@@ -35,6 +35,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow // Импорт для визуальных теней
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -434,6 +436,7 @@ private fun PoolCard(
 ) {
     Column(
         modifier = modifier
+            .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) // Тень карточки пула для эффекта глубины
             .clip(RoundedCornerShape(8.dp))
             .background(DarkCard)
             .border(1.dp, color.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
@@ -469,24 +472,33 @@ private fun PoolCard(
         Spacer(modifier = Modifier.height(4.dp))
 
         // Аватары (показываем первых 3 + счётчик)
+        // Аватары участников (иконка + флаг страны)
         Row(
-            horizontalArrangement = Arrangement.spacedBy((-4).dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val displayNames = botNames.take(3)
             displayNames.forEach { name ->
-                Box(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clip(CircleShape)
-                        .background(color.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center
+                val flag = name.take(2)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    Text(
-                        text = name.take(2),
-                        color = TextPrimary,
-                        fontSize = 8.sp
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(color.copy(alpha = 0.3f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = TextPrimary,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                    Text(text = flag, fontSize = 10.sp)
                 }
             }
             if (hasPlayer) {
@@ -497,17 +509,29 @@ private fun PoolCard(
                         .background(AccentGold.copy(alpha = 0.5f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "Я", color = TextPrimary, fontSize = 8.sp)
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = TextPrimary,
+                        modifier = Modifier.size(14.dp)
+                    )
                 }
             }
             if (botCount > 3) {
                 Text(
-                    text = " +${botCount - 3}",
+                    text = "+${botCount - 3}",
                     color = TextSecondary,
                     fontSize = 10.sp
                 )
             }
         }
+
+        // Общее количество участников
+        Text(
+            text = "$botCount чел.",
+            color = TextSecondary,
+            fontSize = 9.sp
+        )
     }
 }
 
@@ -529,6 +553,7 @@ private fun BetPanel(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(elevation = 6.dp, shape = RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp)) // Тень панели ставки для эффекта глубины
             .background(DarkSurface)
             .navigationBarsPadding()
             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -605,6 +630,7 @@ private fun BetPanel(
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp)
+                    .shadow(elevation = 3.dp, shape = RoundedCornerShape(12.dp)) // Тень кнопки UP
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowUp,
@@ -632,6 +658,7 @@ private fun BetPanel(
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp)
+                    .shadow(elevation = 3.dp, shape = RoundedCornerShape(12.dp)) // Тень кнопки DOWN
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,

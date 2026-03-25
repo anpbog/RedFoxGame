@@ -15,11 +15,19 @@
     <string name="reset_password_title">Reset Password</string>
     <string name="reset_password_button">Send link</string>
     <string name="back">Back</string>
+    <string name="login_subtitle">Sign in to continue</string>
+    <string name="register_subtitle">Create an account to start playing</string>
+
+    <!-- Auth errors -->
+    <string name="error_account_not_found">Account not found. Please register</string>
+    <string name="error_wrong_credentials">Wrong email or password</string>
+    <string name="error_already_registered">User with this email is already registered</string>
+    <string name="error_reset_not_available">Password reset will be available after server connection</string>
 
     <!-- Main -->
     <string name="real_game">Real Game</string>
     <string name="demo_game">Demo Game</string>
-    <string name="real_game_description">Predict the real BTC chart movement on a short interval. The winners\' pool will split 85%% of the losers\' pool.</string>
+    <string name="real_game_description">Predict the real BTC chart movement on a short interval and win real money</string>
     <string name="demo_game_description">Learn the platform and practice making predictions on a demo account</string>
     <string name="badge_coming_soon">Soon</string>
 
@@ -99,4 +107,17 @@
     <string name="error_password_short">Password must be at least 8 characters</string>
     <string name="error_passwords_mismatch">Passwords do not match</string>
     <string name="error_field_required">Required field</string>
+
+    <!-- Profile (statistics screen) -->
+    <string name="profile_demo">Demo</string>
+    <string name="profile_real">Real</string>
+    <string name="profile_filter_day">Day</string>
+    <string name="profile_filter_month">Month</string>
+    <string name="profile_filter_all">All time</string>
+    <string name="profile_total_rounds">Total rounds</string>
+    <string name="profile_wins">Wins</string>
+    <string name="profile_losses">Losses</string>
+    <string name="profile_profit">Profit</string>
+    <string name="profile_avg_bet">Average bet</string>
+    <string name="profile_logout">Logout</string>
 </resources>

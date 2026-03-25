@@ -22,8 +22,8 @@ fun RedFoxNavGraph() {
 
     NavHost(
         navController = navController,
-        // Демо-версия: стартуем с главного экрана (авторизация в Части 2)
-        startDestination = Screen.Main.route
+        // Стартовый экран — авторизация (автовход проверяется внутри LoginScreen)
+        startDestination = Screen.Login.route
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
@@ -91,7 +91,13 @@ fun RedFoxNavGraph() {
 
         composable(Screen.Profile.route) {
             ProfileScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onLogout = {
+                    // При выходе — очищаем стек и переходим на экран логина
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 

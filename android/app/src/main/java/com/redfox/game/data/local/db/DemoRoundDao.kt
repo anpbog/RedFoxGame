@@ -25,4 +25,21 @@ interface DemoRoundDao {
 
     @Query("SELECT COUNT(*) FROM demo_rounds WHERE playerBetDirection IS NOT NULL")
     suspend fun getTotalRounds(): Int
+
+    // Запросы с фильтрацией по периоду времени (для экрана профиля)
+
+    @Query("SELECT COUNT(*) FROM demo_rounds WHERE timestamp >= :fromTimestamp AND playerBetDirection IS NOT NULL")
+    suspend fun getRoundsForPeriod(fromTimestamp: Long): Int
+
+    @Query("SELECT COUNT(*) FROM demo_rounds WHERE timestamp >= :fromTimestamp AND playerBetDirection IS NOT NULL AND playerPayout IS NOT NULL AND playerPayout > 0")
+    suspend fun getWinsForPeriod(fromTimestamp: Long): Int
+
+    @Query("SELECT COUNT(*) FROM demo_rounds WHERE timestamp >= :fromTimestamp AND playerBetDirection IS NOT NULL AND (playerPayout IS NULL OR playerPayout <= 0)")
+    suspend fun getLossesForPeriod(fromTimestamp: Long): Int
+
+    @Query("SELECT COALESCE(SUM(COALESCE(playerPayout, 0) - playerBetAmount), 0.0) FROM demo_rounds WHERE timestamp >= :fromTimestamp AND playerBetDirection IS NOT NULL")
+    suspend fun getProfitForPeriod(fromTimestamp: Long): Double
+
+    @Query("SELECT COALESCE(AVG(playerBetAmount), 0.0) FROM demo_rounds WHERE timestamp >= :fromTimestamp AND playerBetDirection IS NOT NULL")
+    suspend fun getAvgBetForPeriod(fromTimestamp: Long): Double
 }
