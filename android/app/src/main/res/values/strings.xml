@@ -15,11 +15,19 @@
     <string name="reset_password_title">Восстановление пароля</string>
     <string name="reset_password_button">Отправить ссылку</string>
     <string name="back">Назад</string>
+    <string name="login_subtitle">Войдите, чтобы продолжить</string>
+    <string name="register_subtitle">Создайте аккаунт для начала игры</string>
+
+    <!-- Ошибки авторизации -->
+    <string name="error_account_not_found">Аккаунт не найден. Зарегистрируйтесь</string>
+    <string name="error_wrong_credentials">Неверный email или пароль</string>
+    <string name="error_already_registered">Пользователь с таким email уже зарегистрирован</string>
+    <string name="error_reset_not_available">Сброс пароля будет доступен после подключения сервера</string>
 
     <!-- Главный экран -->
     <string name="real_game">Реальная игра</string>
     <string name="demo_game">Демо игра</string>
-    <string name="real_game_description">Спрогнозируйте движение реального графика BTC на коротком интервале. Пул победителей разделит 85%% пула проигравших.</string>
+    <string name="real_game_description">Спрогнозируйте движение реального графика BTC на коротком интервале и заберите реальные деньги</string>
     <string name="demo_game_description">Изучи платформу и потренируйся делать прогноз на демо-счёте игры</string>
     <string name="badge_coming_soon">Скоро</string>
 
@@ -99,4 +107,17 @@
     <string name="error_password_short">Пароль минимум 8 символов</string>
     <string name="error_passwords_mismatch">Пароли не совпадают</string>
     <string name="error_field_required">Обязательное поле</string>
+
+    <!-- Профиль (экран статистики) -->
+    <string name="profile_demo">Демо</string>
+    <string name="profile_real">Реальная</string>
+    <string name="profile_filter_day">День</string>
+    <string name="profile_filter_month">Месяц</string>
+    <string name="profile_filter_all">Всё время</string>
+    <string name="profile_total_rounds">Всего раундов</string>
+    <string name="profile_wins">Побед</string>
+    <string name="profile_losses">Поражений</string>
+    <string name="profile_profit">Профит</string>
+    <string name="profile_avg_bet">Средняя ставка</string>
+    <string name="profile_logout">Выход</string>
 </resources>

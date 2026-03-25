@@ -1,136 +1,113 @@
 package com.redfox.game.data.repository
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
-import com.redfox.game.data.remote.api.AuthApi
-import com.redfox.game.data.remote.dto.LoginRequest
-import com.redfox.game.data.remote.dto.RefreshTokenRequest
-import com.redfox.game.data.remote.dto.RegisterRequest
-import com.redfox.game.data.remote.dto.ResetPasswordRequest
-import com.redfox.game.data.remote.dto.UserDto
-import com.redfox.game.domain.model.AuthToken
+import com.redfox.game.data.local.datastore.AuthDataStore
 import com.redfox.game.domain.model.KycStatus
 import com.redfox.game.domain.model.User
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Репозиторий авторизации — локальная реализация через DataStore.
+ * Все данные хранятся на устройстве (без обращения к серверу).
+ * При подключении бэкенда — заменить на серверную реализацию.
+ */
 @Singleton
 class AuthRepository @Inject constructor(
-    private val authApi: AuthApi,
-    @ApplicationContext private val context: Context
+    private val authDataStore: AuthDataStore
 ) {
-    private val prefs: SharedPreferences by lazy {
-        val masterKey = MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-        EncryptedSharedPreferences.create(
-            context,
-            "auth_prefs",
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-    }
-
+    /**
+     * Вход: проверяет email+пароль в локальном хранилище.
+     * Если данные совпадают — устанавливает флаг isLoggedIn и возвращает User.
+     */
     suspend fun login(email: String, password: String): Result<User> {
         return try {
-            val response = authApi.login(LoginRequest(email, password))
-            if (response.isSuccessful && response.body() != null) {
-                val body = response.body()!!
-                saveTokens(body.accessToken, body.refreshToken, body.expiresIn)
-                Result.success(body.user.toDomain())
-            } else {
-                Result.failure(Exception(response.errorBody()?.string() ?: "Ошибка входа"))
+            // Проверяем, зарегистрирован ли пользователь
+            val savedEmail = authDataStore.getSavedEmail()
+            if (savedEmail == null) {
+                return Result.failure(Exception("Аккаунт не найден. Зарегистрируйтесь"))
             }
+            // Проверяем совпадение email и пароля
+            if (!authDataStore.verifyCredentials(email, password)) {
+                return Result.failure(Exception("Неверный email или пароль"))
+            }
+            // Устанавливаем флаг авторизации
+            authDataStore.setLoggedIn(true)
+            Result.success(createLocalUser(email))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
+    /**
+     * Регистрация: сохраняет email+пароль в DataStore.
+     * Если пользователь с таким email уже зарегистрирован — ошибка.
+     */
     suspend fun register(email: String, password: String, passwordConfirmation: String): Result<User> {
         return try {
-            val response = authApi.register(RegisterRequest(email, password, passwordConfirmation))
-            if (response.isSuccessful && response.body() != null) {
-                val body = response.body()!!
-                saveTokens(body.accessToken, body.refreshToken, body.expiresIn)
-                Result.success(body.user.toDomain())
-            } else {
-                Result.failure(Exception(response.errorBody()?.string() ?: "Ошибка регистрации"))
+            // Проверяем, не зарегистрирован ли уже этот email
+            if (authDataStore.isRegistered(email)) {
+                return Result.failure(Exception("Пользователь с таким email уже зарегистрирован"))
             }
+            // Сохраняем данные и автоматически логиним
+            authDataStore.saveUser(email, password)
+            Result.success(createLocalUser(email))
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
+    /**
+     * Сброс пароля — в локальной версии информируем, что функция недоступна без сервера.
+     */
     suspend fun resetPassword(email: String): Result<String> {
         return try {
-            val response = authApi.resetPassword(ResetPasswordRequest(email))
-            if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!.message)
-            } else {
-                Result.failure(Exception(response.errorBody()?.string() ?: "Ошибка"))
+            if (!authDataStore.isRegistered(email)) {
+                return Result.failure(Exception("Аккаунт с таким email не найден"))
             }
+            Result.success("Сброс пароля будет доступен после подключения сервера. Обратитесь в поддержку")
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    suspend fun refreshToken(): Result<AuthToken> {
-        val savedRefreshToken = getRefreshToken() ?: return Result.failure(Exception("Нет refresh token"))
-        return try {
-            val response = authApi.refreshToken(RefreshTokenRequest(savedRefreshToken))
-            if (response.isSuccessful && response.body() != null) {
-                val body = response.body()!!
-                saveTokens(body.accessToken, body.refreshToken, body.expiresIn)
-                Result.success(AuthToken(body.accessToken, body.refreshToken, body.expiresIn))
-            } else {
-                clearTokens()
-                Result.failure(Exception("Сессия истекла"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    /**
+     * Проверяет, залогинен ли пользователь (для автовхода при запуске).
+     */
+    suspend fun isLoggedIn(): Boolean {
+        return authDataStore.isLoggedIn()
     }
 
-    fun getAccessToken(): String? = prefs.getString(KEY_ACCESS_TOKEN, null)
-
-    fun getRefreshToken(): String? = prefs.getString(KEY_REFRESH_TOKEN, null)
-
-    fun isLoggedIn(): Boolean = getRefreshToken() != null
-
-    fun clearTokens() {
-        prefs.edit()
-            .remove(KEY_ACCESS_TOKEN)
-            .remove(KEY_REFRESH_TOKEN)
-            .remove(KEY_EXPIRES_IN)
-            .apply()
+    /**
+     * Выход из аккаунта — сбрасывает флаг isLoggedIn.
+     * Данные регистрации (email, пароль) сохраняются для повторного входа.
+     */
+    suspend fun logout() {
+        authDataStore.clear()
     }
 
-    private fun saveTokens(accessToken: String, refreshToken: String, expiresIn: Long) {
-        prefs.edit()
-            .putString(KEY_ACCESS_TOKEN, accessToken)
-            .putString(KEY_REFRESH_TOKEN, refreshToken)
-            .putLong(KEY_EXPIRES_IN, System.currentTimeMillis() + expiresIn * 1000)
-            .apply()
+    /**
+     * Возвращает email текущего пользователя.
+     */
+    suspend fun getCurrentEmail(): String? {
+        return authDataStore.getSavedEmail()
     }
 
-    private fun UserDto.toDomain(): User = User(
-        id = id,
-        email = email,
-        nickname = nickname,
-        country = country,
-        balanceReal = balanceReal,
-        balanceDemo = balanceDemo,
-        kycStatus = try { KycStatus.valueOf(kycStatus.uppercase()) } catch (_: Exception) { KycStatus.NONE },
-        emailVerified = emailVerified
-    )
-
-    companion object {
-        private const val KEY_ACCESS_TOKEN = "access_token"
-        private const val KEY_REFRESH_TOKEN = "refresh_token"
-        private const val KEY_EXPIRES_IN = "expires_in"
+    /**
+     * Создаёт локальный объект User на основе email.
+     * Заполняет демо-значения для полей, которые в будущем придут с сервера.
+     */
+    private fun createLocalUser(email: String): User {
+        val trimmedEmail = email.trim().lowercase()
+        val nickname = trimmedEmail.substringBefore("@")
+        return User(
+            id = 0L,
+            email = trimmedEmail,
+            nickname = nickname,
+            country = "",
+            balanceReal = 0.0,
+            balanceDemo = 10000.0,
+            kycStatus = KycStatus.NONE,
+            emailVerified = false
+        )
     }
 }

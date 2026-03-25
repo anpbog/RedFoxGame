@@ -19,10 +19,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -65,15 +67,26 @@ fun MainScreen(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Переключатель языка (правый верхний угол)
+        // Переключатель языка и иконка профиля (правый верхний угол)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             LanguageToggle(
                 currentLanguage = language,
                 onToggle = { viewModel.toggleLanguage() }
             )
+            Spacer(modifier = Modifier.width(12.dp))
+            // Иконка профиля
+            IconButton(onClick = { onNavigateToProfile() }) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = TextPrimary,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -127,7 +140,7 @@ fun MainScreen(
                 containerColor = Color.Transparent
             ),
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 32.dp)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.Send,

@@ -45,6 +45,9 @@ class DemoGameService @Inject constructor(
     private var botJob: Job? = null
     private var roundCounter = 0
 
+    // Абсолютное время окончания текущей фазы (для корректной работы при сворачивании приложения)
+    private var phaseEndTime: Long = 0L
+
     // Состояние текущего раунда
     private val _currentRound = MutableStateFlow(Round())
     val currentRound: StateFlow<Round> = _currentRound.asStateFlow()
@@ -185,25 +188,38 @@ class DemoGameService @Inject constructor(
     }
 
     private suspend fun runBettingPhase() {
+        // Запоминаем абсолютное время окончания фазы
+        phaseEndTime = System.currentTimeMillis() + Constants.BETTING_PHASE_SECONDS * 1000L
+
         // Запускаем генерацию ботов параллельно
         botJob = scope.launch {
             spawnBots()
         }
 
-        for (second in Constants.BETTING_PHASE_SECONDS downTo 1) {
-            // Пауза при потере соединения
-            while (_isPaused.value) {
-                delay(500)
+        // Цикл таймера на основе абсолютного времени (работает корректно при сворачивании)
+        while (System.currentTimeMillis() < phaseEndTime) {
+            // Пауза при потере соединения — сдвигаем дедлайн
+            if (_isPaused.value) {
+                val pauseStart = System.currentTimeMillis()
+                while (_isPaused.value) {
+                    delay(500)
+                }
+                phaseEndTime += System.currentTimeMillis() - pauseStart
             }
 
-            _timer.value = second
-            _currentRound.value = _currentRound.value.copy(timerSeconds = second)
+            val secondsLeft = ((phaseEndTime - System.currentTimeMillis()) / 1000).toInt().coerceAtLeast(0)
+            _timer.value = secondsLeft
+            _currentRound.value = _currentRound.value.copy(timerSeconds = secondsLeft)
 
             // Отслеживаем направление цены для edge case
             trackPriceDirection()
 
-            delay(1000)
+            delay(200) // Обновляем чаще для плавности отображения
         }
+
+        // Гарантируем сброс таймера в 0 при завершении фазы
+        _timer.value = 0
+        _currentRound.value = _currentRound.value.copy(timerSeconds = 0)
 
         // Останавливаем генерацию ботов при переходе из BETTING
         botJob?.cancel()
@@ -245,16 +261,30 @@ class DemoGameService @Inject constructor(
         )
         _timer.value = Constants.ACTIVE_PHASE_SECONDS
 
-        for (second in Constants.ACTIVE_PHASE_SECONDS downTo 1) {
-            while (_isPaused.value) {
-                delay(500)
+        // Запоминаем абсолютное время окончания фазы
+        phaseEndTime = System.currentTimeMillis() + Constants.ACTIVE_PHASE_SECONDS * 1000L
+
+        // Цикл таймера на основе абсолютного времени (работает корректно при сворачивании)
+        while (System.currentTimeMillis() < phaseEndTime) {
+            // Пауза при потере соединения — сдвигаем дедлайн
+            if (_isPaused.value) {
+                val pauseStart = System.currentTimeMillis()
+                while (_isPaused.value) {
+                    delay(500)
+                }
+                phaseEndTime += System.currentTimeMillis() - pauseStart
             }
 
-            _timer.value = second
-            _currentRound.value = _currentRound.value.copy(timerSeconds = second)
+            val secondsLeft = ((phaseEndTime - System.currentTimeMillis()) / 1000).toInt().coerceAtLeast(0)
+            _timer.value = secondsLeft
+            _currentRound.value = _currentRound.value.copy(timerSeconds = secondsLeft)
             trackPriceDirection()
-            delay(1000)
+            delay(200) // Обновляем чаще для плавности отображения
         }
+
+        // Гарантируем сброс таймера в 0 при завершении фазы
+        _timer.value = 0
+        _currentRound.value = _currentRound.value.copy(timerSeconds = 0)
     }
 
     private suspend fun runCalculatingPhase() {

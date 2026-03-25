@@ -10,9 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -54,7 +57,7 @@ fun BtcChart(
     val latestPrice = trades.last().price
 
     Box(modifier = modifier) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp))) {
             val rightPadding = 80.dp.toPx()  // Место для шкалы цен
             val topPadding = 8.dp.toPx()
             val bottomPadding = 8.dp.toPx()
@@ -75,8 +78,8 @@ fun BtcChart(
             }
 
             val priceRange = maxPrice - minPrice
-            // Увеличенный padding 25% для плавного визуального восприятия
-            val padding = if (priceRange > 0) priceRange * 0.25 else maxPrice * 0.001
+            // Увеличенный padding 40% для плавного визуального восприятия
+            val padding = if (priceRange > 0) priceRange * 0.40 else maxPrice * 0.001
             val yMin = minPrice - padding
             val yMax = maxPrice + padding
             val yRange = yMax - yMin
@@ -110,25 +113,39 @@ fun BtcChart(
                 priceToY(latestPrice)
             }
 
-            // Зелёная зона UP — от верхнего края графика до линии-разделителя
-            drawRect(
-                color = PoolUp.copy(alpha = 0.65f),
-                topLeft = Offset(0f, topPadding),
-                size = Size(
-                    chartWidth,
-                    (dividerY - topPadding).coerceAtLeast(0f)
+            // Зелёная зона UP — градиент: прозрачный сверху -> зелёный полупрозрачный снизу
+            val upZoneHeight = (dividerY - topPadding).coerceAtLeast(0f)
+            if (upZoneHeight > 0f) {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0x00000000),              // прозрачный сверху
+                            PoolUp.copy(alpha = 0.4f)       // зелёный полупрозрачный снизу
+                        ),
+                        startY = topPadding,
+                        endY = dividerY
+                    ),
+                    topLeft = Offset(0f, topPadding),
+                    size = Size(chartWidth, upZoneHeight)
                 )
-            )
+            }
 
-            // Красная зона DOWN — от линии-разделителя до нижнего края графика
-            drawRect(
-                color = PoolDown.copy(alpha = 0.65f),
-                topLeft = Offset(0f, dividerY),
-                size = Size(
-                    chartWidth,
-                    (topPadding + chartHeight - dividerY).coerceAtLeast(0f)
+            // Красная зона DOWN — градиент: красный полупрозрачный сверху -> тёмно-серый снизу
+            val downZoneHeight = (topPadding + chartHeight - dividerY).coerceAtLeast(0f)
+            if (downZoneHeight > 0f) {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            PoolDown.copy(alpha = 0.4f),    // красный полупрозрачный сверху
+                            Color(0xFF1A1A1A)               // тёмно-серый снизу
+                        ),
+                        startY = dividerY,
+                        endY = topPadding + chartHeight
+                    ),
+                    topLeft = Offset(0f, dividerY),
+                    size = Size(chartWidth, downZoneHeight)
                 )
-            )
+            }
 
             // --- Линия цены ---
             if (trades.size >= 2) {
@@ -144,7 +161,41 @@ fun BtcChart(
                 )
             }
 
-            // --- Линия START (пунктирная жёлтая) ---
+            // --- Иконка BTC — золотая монета на текущей точке ---
+            if (trades.isNotEmpty()) {
+                val lastX = indexToX(trades.size - 1)
+                val lastY = priceToY(latestPrice)
+                val outerRadius = 12.dp.toPx()
+                val innerRadius = 10.dp.toPx()
+
+                // Внешний круг — золотой
+                drawCircle(
+                    color = AccentGold,
+                    radius = outerRadius,
+                    center = Offset(lastX, lastY)
+                )
+                // Внутренний круг — чуть темнее золотого
+                drawCircle(
+                    color = AccentGold.copy(alpha = 0.8f),
+                    radius = innerRadius,
+                    center = Offset(lastX, lastY)
+                )
+                // Символ ₿ — белый, жирный, по центру
+                drawContext.canvas.nativeCanvas.drawText(
+                    "₿",
+                    lastX,
+                    lastY + 5.dp.toPx(),
+                    android.graphics.Paint().apply {
+                        color = android.graphics.Color.WHITE
+                        textSize = 14.sp.toPx()
+                        isAntiAlias = true
+                        isFakeBoldText = true
+                        textAlign = android.graphics.Paint.Align.CENTER
+                    }
+                )
+            }
+
+            // --- Горизонтальная линия START (пунктирная жёлтая) ---
             if (startPrice != null && (phase == RoundPhase.ACTIVE || phase == RoundPhase.CALCULATING)) {
                 val startY = priceToY(startPrice)
                 drawLine(
@@ -166,16 +217,34 @@ fun BtcChart(
                         isAntiAlias = true
                     }
                 )
+
+                // --- Вертикальная пунктирная линия START ---
+                val startX = indexToX(0)
+                drawLine(
+                    color = AccentGold,
+                    start = Offset(startX, topPadding),
+                    end = Offset(startX, topPadding + chartHeight),
+                    strokeWidth = 1.dp.toPx(),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 8f))
+                )
+
+                // --- Точка фиксации цены (кружок) на пересечении линии цены и линии START ---
+                drawCircle(
+                    color = AccentGold,
+                    radius = 6.dp.toPx(),
+                    center = Offset(startX, startY)
+                )
             }
 
-            // --- Линия FINISH (вертикальная справа) ---
+            // --- Линия FINISH (вертикальная пунктирная справа) ---
             if (phase == RoundPhase.ACTIVE) {
                 val finishX = chartWidth - 2.dp.toPx()
                 drawLine(
                     color = AccentGold,
                     start = Offset(finishX, topPadding),
                     end = Offset(finishX, topPadding + chartHeight),
-                    strokeWidth = 2.dp.toPx()
+                    strokeWidth = 2.dp.toPx(),
+                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 8f))
                 )
                 // Флажок
                 val flagPath = Path().apply {
@@ -185,39 +254,6 @@ fun BtcChart(
                     close()
                 }
                 drawPath(flagPath, color = AccentGold)
-            }
-
-            // --- Иконка BTC на текущей точке ---
-            if (trades.isNotEmpty()) {
-                val lastX = indexToX(trades.size - 1)
-                val lastY = priceToY(latestPrice)
-                val radius = 10.dp.toPx()
-
-                // Внешний круг
-                drawCircle(
-                    color = ChartLine,
-                    radius = radius,
-                    center = Offset(lastX, lastY)
-                )
-                // Внутренний круг
-                drawCircle(
-                    color = DarkSurface,
-                    radius = radius - 2.dp.toPx(),
-                    center = Offset(lastX, lastY)
-                )
-                // Символ ₿
-                drawContext.canvas.nativeCanvas.drawText(
-                    "₿",
-                    lastX - 5.dp.toPx(),
-                    lastY + 5.dp.toPx(),
-                    android.graphics.Paint().apply {
-                        color = AccentGold.toArgb()
-                        textSize = 12.sp.toPx()
-                        isAntiAlias = true
-                        isFakeBoldText = true
-                        textAlign = android.graphics.Paint.Align.CENTER
-                    }
-                )
             }
 
             // --- Шкала цен справа ---

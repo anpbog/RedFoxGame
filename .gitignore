@@ -5,6 +5,13 @@ CLAUDE.md
 # === Память Claude ===
 .claude/
 
+# === Мульти-агентная система (локальная) ===
+_agents/
+
+# === Инструкции настройки (шаблоны) ===
+_CLAUDE_SETUP.md
+SETUP_CLAUDE.md
+
 # === Android build ===
 android/app/build/
 android/build/
