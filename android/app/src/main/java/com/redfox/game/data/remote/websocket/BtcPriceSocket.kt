@@ -81,8 +81,8 @@ class BtcPriceSocket @Inject constructor(
 
                     _latestPrice.value = price
 
-                    // Субсэмплирование: добавляем в буфер 1 точку каждые 500мс
-                    // Это даёт 120 точек ≈ 60 секунд данных для плавного графика
+                    // Субсэмплирование: добавляем в буфер 1 точку каждые 250мс
+                    // Это даёт 240 точек ≈ 60 секунд данных для плавного графика
                     synchronized(bufferLock) {
                         if (timestamp - lastBufferTimestamp >= SAMPLE_INTERVAL_MS) {
                             lastBufferTimestamp = timestamp
