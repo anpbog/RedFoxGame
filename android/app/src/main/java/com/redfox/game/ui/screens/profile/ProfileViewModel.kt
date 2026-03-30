@@ -2,8 +2,6 @@ package com.redfox.game.ui.screens.profile
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -99,17 +97,6 @@ class ProfileViewModel @Inject constructor(
             }
 
             _state.value = _state.value.copy(stats = stats, isLoading = false)
-        }
-    }
-
-    // Выход из аккаунта
-    fun logout() {
-        viewModelScope.launch {
-            dataStore.edit { prefs ->
-                prefs.remove(stringPreferencesKey("auth_email"))
-                prefs.remove(stringPreferencesKey("auth_password_hash"))
-                prefs.remove(booleanPreferencesKey("auth_is_logged_in"))
-            }
         }
     }
 }

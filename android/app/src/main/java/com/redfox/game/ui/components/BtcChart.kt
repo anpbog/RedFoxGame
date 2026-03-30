@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +22,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,6 +57,17 @@ fun BtcChart(
     }
 
     val priceFormat = DecimalFormat("#,##0.00")
+
+    // Анимация плавного появления только последнего сегмента линии
+    val animatedFraction = remember { androidx.compose.animation.core.Animatable(0f) }
+    LaunchedEffect(trades.size) {
+        if (trades.size <= 2) {
+            animatedFraction.snapTo(1f)
+        } else {
+            animatedFraction.snapTo(0f)
+            animatedFraction.animateTo(1f, animationSpec = androidx.compose.animation.core.tween(durationMillis = 300))
+        }
+    }
     val latestPrice = trades.last().price
 
     Box(modifier = modifier) {
@@ -91,10 +105,13 @@ fun BtcChart(
                 return topPadding + chartHeight * (1 - ((price - yMin) / yRange)).toFloat()
             }
 
-            // Функция: индекс → X-координата
-            fun indexToX(index: Int): Float {
-                return if (trades.size <= 1) chartWidth / 2
-                else chartWidth * index.toFloat() / (trades.size - 1)
+            // X-позиция по timestamp (точки не сдвигаются при добавлении новых)
+            val firstTs = trades.first().timestamp.toFloat()
+            val lastTs = trades.last().timestamp.toFloat()
+            val timeRange = (lastTs - firstTs).coerceAtLeast(1f)
+
+            fun tradeToX(trade: BtcTrade): Float {
+                return chartWidth * (trade.timestamp.toFloat() - firstTs) / timeRange
             }
 
             // --- Сетка ---
@@ -147,24 +164,79 @@ fun BtcChart(
                 )
             }
 
-            // --- Линия цены ---
+            // --- Плавная анимированная линия цены ---
+
             if (trades.size >= 2) {
-                val pricePath = Path()
-                pricePath.moveTo(indexToX(0), priceToY(trades[0].price))
-                for (i in 1 until trades.size) {
-                    pricePath.lineTo(indexToX(i), priceToY(trades[i].price))
+                // Точки для построения пути
+                val points = trades.map { t -> Offset(tradeToX(t), priceToY(t.price)) }
+
+                // Функция: создаём сглаженный путь (приближённый Catmull-Rom) через кубические сегменты
+                fun createSmoothedPath(pts: List<Offset>): Path {
+                    val p = Path()
+                    if (pts.isEmpty()) return p
+                    p.moveTo(pts[0].x, pts[0].y)
+                    if (pts.size == 1) return p
+                    for (i in 0 until pts.size - 1) {
+                        val p0 = if (i - 1 >= 0) pts[i - 1] else pts[i]
+                        val p1 = pts[i]
+                        val p2 = pts[i + 1]
+                        val p3 = if (i + 2 < pts.size) pts[i + 2] else p2
+
+                        val cp1x = p1.x + (p2.x - p0.x) / 6f
+                        val cp1y = p1.y + (p2.y - p0.y) / 6f
+                        val cp2x = p2.x - (p3.x - p1.x) / 6f
+                        val cp2y = p2.y - (p3.y - p1.y) / 6f
+
+                        p.cubicTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y)
+                    }
+                    return p
                 }
-                drawPath(
-                    path = pricePath,
-                    color = ChartLine,
-                    style = Stroke(width = 2.dp.toPx())
-                )
+
+                val smoothPath = createSmoothedPath(points)
+
+                // Рисуем всю линию сразу (без анимации для старых точек)
+                if (points.size >= 2) {
+                    // Путь без последней точки — рисуется мгновенно
+                    val stablePoints = points.dropLast(1)
+                    if (stablePoints.size >= 2) {
+                        val stablePath = createSmoothedPath(stablePoints)
+                        drawPath(
+                            path = stablePath,
+                            color = ChartLine,
+                            style = Stroke(width = 2.dp.toPx())
+                        )
+                    }
+
+                    // Последний сегмент — плавно появляется
+                    val lastIdx = points.size - 1
+                    val prevPoint = points[lastIdx - 1]
+                    val currPoint = points[lastIdx]
+                    val animX = prevPoint.x + (currPoint.x - prevPoint.x) * animatedFraction.value
+                    val animY = prevPoint.y + (currPoint.y - prevPoint.y) * animatedFraction.value
+
+                    clipRect(left = 0f, top = 0f, right = animX, bottom = topPadding + chartHeight) {
+                        drawPath(
+                            path = smoothPath,
+                            color = ChartLine,
+                            style = Stroke(width = 2.dp.toPx())
+                        )
+                    }
+                }
             }
 
-            // --- Иконка BTC — золотая монета на текущей точке ---
+            // --- Иконка BTC — золотая монета на текущей (анимированной) точке ---
             if (trades.isNotEmpty()) {
-                val lastX = indexToX(trades.size - 1)
-                val lastY = priceToY(latestPrice)
+                val lastX: Float
+                val lastY: Float
+                if (trades.size >= 2) {
+                    val prevPt = Offset(tradeToX(trades[trades.size - 2]), priceToY(trades[trades.size - 2].price))
+                    val currPt = Offset(tradeToX(trades.last()), priceToY(latestPrice))
+                    lastX = prevPt.x + (currPt.x - prevPt.x) * animatedFraction.value
+                    lastY = prevPt.y + (currPt.y - prevPt.y) * animatedFraction.value
+                } else {
+                    lastX = tradeToX(trades.first())
+                    lastY = priceToY(latestPrice)
+                }
                 val outerRadius = 12.dp.toPx()
                 val innerRadius = 10.dp.toPx()
 
@@ -219,7 +291,7 @@ fun BtcChart(
                 )
 
                 // --- Вертикальная пунктирная линия START ---
-                val startX = indexToX(0)
+                val startX = tradeToX(trades.first())
                 drawLine(
                     color = AccentGold,
                     start = Offset(startX, topPadding),

@@ -41,6 +41,7 @@ class BtcPriceSocket @Inject constructor(
     val latestPrice: StateFlow<Double> = _latestPrice.asStateFlow()
 
     private val bufferLock = Any()
+    private var lastBufferTimestamp = 0L
     private var webSocket: WebSocket? = null
     private var shouldReconnect = true
 
@@ -80,14 +81,18 @@ class BtcPriceSocket @Inject constructor(
 
                     _latestPrice.value = price
 
-                    // Обновляем буфер (последние 120 точек) — атомарно
+                    // Субсэмплирование: добавляем в буфер 1 точку каждые 500мс
+                    // Это даёт 120 точек ≈ 60 секунд данных для плавного графика
                     synchronized(bufferLock) {
-                        val current = _priceBuffer.value.toMutableList()
-                        current.add(trade)
-                        if (current.size > BUFFER_SIZE) {
-                            current.removeAt(0)
+                        if (timestamp - lastBufferTimestamp >= SAMPLE_INTERVAL_MS) {
+                            lastBufferTimestamp = timestamp
+                            val current = _priceBuffer.value.toMutableList()
+                            current.add(trade)
+                            if (current.size > BUFFER_SIZE) {
+                                current.removeAt(0)
+                            }
+                            _priceBuffer.value = current
                         }
-                        _priceBuffer.value = current
                     }
 
                     scope.launch {
@@ -122,6 +127,7 @@ class BtcPriceSocket @Inject constructor(
 
     companion object {
         const val BUFFER_SIZE = 120
+        const val SAMPLE_INTERVAL_MS = 500L
         const val RECONNECT_DELAY_MS = 3000L
     }
 }

@@ -67,3 +67,10 @@ assets/psd/
 *.ai
 *.sketch
 *.fig
+
+# Видео-референсы
+dvig.mp4
+
+# Заготовки (будут добавлены в git при готовности)
+admin/
+backend/
