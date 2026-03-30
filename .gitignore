@@ -29,6 +29,8 @@ android/local.properties
 .env.*
 *.jks
 *.keystore
+# Исключение: проектный debug-ключ (не секретный, нужен для обновления APK)
+!android/app/debug.keystore
 *.key
 *.pem
 *.p12
