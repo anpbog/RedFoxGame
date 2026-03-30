@@ -243,7 +243,9 @@ fun BtcChart(
                 )
 
                 // --- Вертикальная пунктирная линия START ---
-                val startX = tradeToX(trades.first())
+                // Рисуем на X первой видимой точки (левый край линии цены)
+                val visibleTrades = trades.filter { tradeToX(it) >= 0f }
+                val startX = if (visibleTrades.isNotEmpty()) tradeToX(visibleTrades.first()) else 0f
                 drawLine(
                     color = AccentGold,
                     start = Offset(startX, topPadding),
