@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -365,6 +367,7 @@ private fun RoundHistoryRow(history: List<Round>) {
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
                     .background(color.copy(alpha = 0.15f))
+                    .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(6.dp)) // Белая рамка для элементов истории
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -394,6 +397,7 @@ private fun PoolPanel(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(IntrinsicSize.Max) // Выравнивание высоты карточек пулов
             .padding(horizontal = 8.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -436,6 +440,7 @@ private fun PoolCard(
 ) {
     Column(
         modifier = modifier
+            .fillMaxHeight() // Заполняем высоту для одинаковых карточек
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp)) // Тень карточки пула для эффекта глубины
             .clip(RoundedCornerShape(8.dp))
             .background(DarkCard)
@@ -630,7 +635,7 @@ private fun BetPanel(
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp)
-                    .shadow(elevation = 3.dp, shape = RoundedCornerShape(12.dp)) // Тень кнопки UP
+                    .shadow(elevation = 3.dp, shape = RoundedCornerShape(8.dp)) // Тень кнопки UP — shape совпадает с кнопкой
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowUp,
@@ -658,7 +663,7 @@ private fun BetPanel(
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp)
-                    .shadow(elevation = 3.dp, shape = RoundedCornerShape(12.dp)) // Тень кнопки DOWN
+                    .shadow(elevation = 3.dp, shape = RoundedCornerShape(8.dp)) // Тень кнопки DOWN — shape совпадает с кнопкой
             ) {
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
