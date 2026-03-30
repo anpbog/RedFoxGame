@@ -103,7 +103,7 @@ fun RegisterScreen(
             ) {
                 // Логотип
                 Image(
-                    painter = painterResource(R.drawable.ic_launcher_foreground),
+                    painter = painterResource(R.drawable.icon_pril),
                     contentDescription = null,
                     modifier = Modifier.size(72.dp)
                 )
