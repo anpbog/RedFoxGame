@@ -159,24 +159,30 @@ fun BtcChart(
                 )
             }
 
-            // --- Плавная анимированная линия цены ---
+            // --- Линия цены ---
 
             if (trades.size >= 2) {
-                // Точки для линии цены
-                val points = trades.map { t -> Offset(tradeToX(t), priceToY(t.price)) }
+                // Только видимые точки (X >= 0, в пределах графика)
+                val points = trades
+                    .map { t -> Offset(tradeToX(t), priceToY(t.price)) }
+                    .filter { it.x >= -50f && it.x <= chartWidth + 50f }
 
-                // Рисуем линию цены — прямые отрезки между точками
-                val path = Path()
-                path.moveTo(points[0].x, points[0].y)
-                for (i in 1 until points.size) {
-                    path.lineTo(points[i].x, points[i].y)
+                if (points.size >= 2) {
+                    val path = Path()
+                    path.moveTo(points[0].x, points[0].y)
+                    for (i in 1 until points.size) {
+                        path.lineTo(points[i].x, points[i].y)
+                    }
+
+                    // Обрезаем отрисовку по границам графика
+                    clipRect(0f, topPadding, chartWidth, topPadding + chartHeight) {
+                        drawPath(
+                            path = path,
+                            color = ChartLine,
+                            style = Stroke(width = 2.dp.toPx())
+                        )
+                    }
                 }
-
-                drawPath(
-                    path = path,
-                    color = ChartLine,
-                    style = Stroke(width = 2.dp.toPx())
-                )
             }
 
             // --- Иконка BTC — золотая монета всегда в центре графика ---
