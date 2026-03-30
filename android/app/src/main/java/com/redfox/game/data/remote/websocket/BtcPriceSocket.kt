@@ -126,8 +126,8 @@ class BtcPriceSocket @Inject constructor(
     }
 
     companion object {
-        const val BUFFER_SIZE = 120
-        const val SAMPLE_INTERVAL_MS = 500L
+        const val BUFFER_SIZE = 240
+        const val SAMPLE_INTERVAL_MS = 250L
         const val RECONNECT_DELAY_MS = 3000L
     }
 }

@@ -58,16 +58,6 @@ fun BtcChart(
 
     val priceFormat = DecimalFormat("#,##0.00")
 
-    // Анимация плавного появления только последнего сегмента линии
-    val animatedFraction = remember { androidx.compose.animation.core.Animatable(0f) }
-    LaunchedEffect(trades.size) {
-        if (trades.size <= 2) {
-            animatedFraction.snapTo(1f)
-        } else {
-            animatedFraction.snapTo(0f)
-            animatedFraction.animateTo(1f, animationSpec = androidx.compose.animation.core.tween(durationMillis = 300))
-        }
-    }
     val latestPrice = trades.last().price
 
     Box(modifier = modifier) {
@@ -169,79 +159,42 @@ fun BtcChart(
                 )
             }
 
-            // --- Плавная анимированная линия цены ---
+            // --- Линия цены ---
 
             if (trades.size >= 2) {
-                // Точки для построения пути
-                val points = trades.map { t -> Offset(tradeToX(t), priceToY(t.price)) }
+                // Видимые точки
+                val points = trades
+                    .map { t -> Offset(tradeToX(t), priceToY(t.price)) }
+                    .filter { it.x >= -50f && it.x <= chartWidth + 50f }
 
-                // Функция: создаём сглаженный путь (приближённый Catmull-Rom) через кубические сегменты
-                fun createSmoothedPath(pts: List<Offset>): Path {
-                    val p = Path()
-                    if (pts.isEmpty()) return p
-                    p.moveTo(pts[0].x, pts[0].y)
-                    if (pts.size == 1) return p
-                    for (i in 0 until pts.size - 1) {
-                        val p0 = if (i - 1 >= 0) pts[i - 1] else pts[i]
-                        val p1 = pts[i]
-                        val p2 = pts[i + 1]
-                        val p3 = if (i + 2 < pts.size) pts[i + 2] else p2
+                val path = Path()
 
-                        val cp1x = p1.x + (p2.x - p0.x) / 6f
-                        val cp1y = p1.y + (p2.y - p0.y) / 6f
-                        val cp2x = p2.x - (p3.x - p1.x) / 6f
-                        val cp2y = p2.y - (p3.y - p1.y) / 6f
-
-                        p.cubicTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y)
+                if (points.size < 5) {
+                    // Мало данных — горизонтальная линия от левого края до точки BTC
+                    val currentY = priceToY(latestPrice)
+                    path.moveTo(0f, currentY)
+                    path.lineTo(centerX, currentY)
+                } else {
+                    // Достаточно данных — реальная кривая цены
+                    path.moveTo(points[0].x, points[0].y)
+                    for (i in 1 until points.size) {
+                        path.lineTo(points[i].x, points[i].y)
                     }
-                    return p
                 }
 
-                val smoothPath = createSmoothedPath(points)
-
-                // Рисуем всю линию сразу (без анимации для старых точек)
-                if (points.size >= 2) {
-                    // Путь без последней точки — рисуется мгновенно
-                    val stablePoints = points.dropLast(1)
-                    if (stablePoints.size >= 2) {
-                        val stablePath = createSmoothedPath(stablePoints)
-                        drawPath(
-                            path = stablePath,
-                            color = ChartLine,
-                            style = Stroke(width = 2.dp.toPx())
-                        )
-                    }
-
-                    // Последний сегмент — плавно появляется
-                    val lastIdx = points.size - 1
-                    val prevPoint = points[lastIdx - 1]
-                    val currPoint = points[lastIdx]
-                    val animX = prevPoint.x + (currPoint.x - prevPoint.x) * animatedFraction.value
-                    val animY = prevPoint.y + (currPoint.y - prevPoint.y) * animatedFraction.value
-
-                    clipRect(left = 0f, top = 0f, right = animX, bottom = topPadding + chartHeight) {
-                        drawPath(
-                            path = smoothPath,
-                            color = ChartLine,
-                            style = Stroke(width = 2.dp.toPx())
-                        )
-                    }
+                clipRect(0f, topPadding, chartWidth, topPadding + chartHeight) {
+                    drawPath(
+                        path = path,
+                        color = ChartLine,
+                        style = Stroke(width = 2.dp.toPx())
+                    )
                 }
             }
 
-            // --- Иконка BTC — золотая монета на текущей (анимированной) точке ---
+            // --- Иконка BTC — золотая монета всегда в центре графика ---
             if (trades.isNotEmpty()) {
-                val lastX: Float
-                val lastY: Float
-                if (trades.size >= 2) {
-                    val prevPt = Offset(tradeToX(trades[trades.size - 2]), priceToY(trades[trades.size - 2].price))
-                    val currPt = Offset(tradeToX(trades.last()), priceToY(latestPrice))
-                    lastX = prevPt.x + (currPt.x - prevPt.x) * animatedFraction.value
-                    lastY = prevPt.y + (currPt.y - prevPt.y) * animatedFraction.value
-                } else {
-                    lastX = tradeToX(trades.first())
-                    lastY = priceToY(latestPrice)
-                }
+                val lastX = centerX // Всегда в центре
+                val lastY = priceToY(latestPrice)
                 val outerRadius = 12.dp.toPx()
                 val innerRadius = 10.dp.toPx()
 
@@ -296,7 +249,9 @@ fun BtcChart(
                 )
 
                 // --- Вертикальная пунктирная линия START ---
-                val startX = tradeToX(trades.first())
+                // Рисуем на X первой видимой точки (левый край линии цены)
+                val visibleTrades = trades.filter { tradeToX(it) >= 0f }
+                val startX = if (visibleTrades.isNotEmpty()) tradeToX(visibleTrades.first()) else 0f
                 drawLine(
                     color = AccentGold,
                     start = Offset(startX, topPadding),
