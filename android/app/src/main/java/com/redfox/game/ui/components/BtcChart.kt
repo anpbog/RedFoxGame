@@ -105,18 +105,18 @@ fun BtcChart(
                 return topPadding + chartHeight * (1 - ((price - yMin) / yRange)).toFloat()
             }
 
-            // Точка BTC всегда в центре графика по X
-            // Слева — история цен, справа — пустое пространство
-            // Полное временное окно = 120 сек, последняя точка = середина
-            val VISIBLE_HISTORY_MS = 60_000f // 60 сек истории слева от точки
+            // Точка BTC (последняя цена) ВСЕГДА в центре графика
+            // Линия рисуется от точки СПРАВА НАЛЕВО (история уходит влево)
+            // Масштаб: 60 сек истории занимают левую половину экрана
+            val HALF_WINDOW_MS = 60_000f // левая половина = 60 сек
             val lastTs = trades.last().timestamp.toFloat()
-            // Окно: от (lastTs - 60 сек) до (lastTs + 60 сек)
-            // Последняя точка (lastTs) попадает ровно на chartWidth / 2
-            val windowStartTs = lastTs - VISIBLE_HISTORY_MS
-            val windowDuration = VISIBLE_HISTORY_MS * 2f // полное окно = 120 сек
+            val centerX = chartWidth / 2f
 
             fun tradeToX(trade: BtcTrade): Float {
-                return chartWidth * (trade.timestamp.toFloat() - windowStartTs) / windowDuration
+                // Разница во времени от текущей точки (отрицательная для старых)
+                val deltaMs = trade.timestamp.toFloat() - lastTs
+                // Масштаб: HALF_WINDOW_MS → centerX пикселей
+                return centerX + (deltaMs / HALF_WINDOW_MS) * centerX
             }
 
             // --- Сетка ---
