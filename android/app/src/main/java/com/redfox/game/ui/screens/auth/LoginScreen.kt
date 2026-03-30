@@ -124,7 +124,7 @@ fun LoginScreen(
 
             // Логотип
             Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
+                painter = painterResource(R.drawable.icon_pril),
                 contentDescription = "RedFox Game",
                 modifier = Modifier.size(96.dp)
             )

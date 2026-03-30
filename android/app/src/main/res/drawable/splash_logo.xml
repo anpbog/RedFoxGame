@@ -11,7 +11,7 @@
 
     <!-- Логотип лисы по центру -->
     <item
-        android:drawable="@drawable/ic_launcher_foreground"
+        android:drawable="@drawable/icon_pril"
         android:gravity="center"
         android:width="120dp"
         android:height="120dp" />
